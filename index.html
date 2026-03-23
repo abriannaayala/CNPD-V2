@@ -353,6 +353,45 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
     <div id="recent-used-wrap"></div>
   </div>
 
+  <!-- Backlog button in LOG tab -->
+<button class="log-save-btn" id="lb-backlog" onclick="backlogIt()">Backlog moment</button>
+
+<script>
+// Backlog a moment with editable date and time
+function backlogIt() {
+  const note = document.getElementById('ln').value.trim();
+  if (!note) { toast('Add a note first.'); return; }
+
+  // Prompt user for date and time
+  let dateInput = prompt('Enter date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+  if (!dateInput) return;
+  let timeInput = prompt('Enter time (HH:MM, 24-hour):', new Date().toTimeString().slice(0,5));
+  if (!timeInput) return;
+
+  // Combine date and time into ISO string
+  const ts = new Date(dateInput + 'T' + timeInput + ':00').toISOString();
+
+  // Add to state.moments
+  const newMoment = {
+    id: Date.now() + Math.random(),
+    cid: 'backlog',
+    cl: 'Backlog',
+    grp: 'attention', // default group, can be customized
+    gn: 'Backlog',
+    note: note,
+    ts: ts,
+    cultural: false
+  };
+
+  state.moments.unshift(newMoment);
+  save();
+  rAll();            // refresh log/recent used
+  renderHistory();   // show in history
+  toast('Backlogged entry added.');
+  document.getElementById('ln').value = ''; // clear log textarea
+}
+</script>
+
   <div class="sect-divider"></div>
 
   <div class="fhd">
