@@ -344,6 +344,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
     <div class="multi-chips" id="multi-chips"></div>
     <div class="log-status" id="lfs">Tap what feels closest (you can't get it wrong)</div>
 
+    <div class="dfb">
+      <span class="dl">Date</span>
+      <input class="di" type="date" id="log-d">
+      <span class="dl">Time</span>
+      <input class="di" type="time" id="log-t" step="60">
+      <button class="dc-btn" type="button" onclick="clearLogDateTime()">Now</button>
+    </div>
+
     <div class="cats-section" id="cats-section">
       <div id="cats"></div>
     </div>
@@ -352,45 +360,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
     <div id="recent-used-wrap"></div>
   </div>
-
-  <!-- Backlog button in LOG tab -->
-<button class="log-save-btn" id="lb-backlog" onclick="backlogIt()">Backlog moment</button>
-
-<script>
-// Backlog a moment with editable date and time
-function backlogIt() {
-  const note = document.getElementById('ln').value.trim();
-  if (!note) { toast('Add a note first.'); return; }
-
-  // Prompt user for date and time
-  let dateInput = prompt('Enter date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
-  if (!dateInput) return;
-  let timeInput = prompt('Enter time (HH:MM, 24-hour):', new Date().toTimeString().slice(0,5));
-  if (!timeInput) return;
-
-  // Combine date and time into ISO string
-  const ts = new Date(dateInput + 'T' + timeInput + ':00').toISOString();
-
-  // Add to state.moments
-  const newMoment = {
-    id: Date.now() + Math.random(),
-    cid: 'backlog',
-    cl: 'Backlog',
-    grp: 'attention', // default group, can be customized
-    gn: 'Backlog',
-    note: note,
-    ts: ts,
-    cultural: false
-  };
-
-  state.moments.unshift(newMoment);
-  save();
-  rAll();            // refresh log/recent used
-  renderHistory();   // show in history
-  toast('Backlogged entry added.');
-  document.getElementById('ln').value = ''; // clear log textarea
-}
-</script>
 
   <div class="sect-divider"></div>
 
@@ -1479,12 +1448,34 @@ function removeSel(el){
   rCats();uForm();
 }
 
+function getLogTimestampISO(){
+  var d=(document.getElementById('log-d')||{}).value||'';
+  var t=(document.getElementById('log-t')||{}).value||'';
+  if(!d&&!t)return new Date().toISOString();
+  var hh='12',mm='00';
+  if(t){
+    var p=t.split(':');
+    hh=p[0]||'12';
+    mm=p[1]||'00';
+  }
+  if(!d)return new Date().toISOString();
+  var dt=new Date(d+'T'+hh+':'+mm+':00');
+  if(isNaN(dt.getTime()))return new Date().toISOString();
+  return dt.toISOString();
+}
+function clearLogDateTime(){
+  var d=document.getElementById('log-d');
+  var t=document.getElementById('log-t');
+  if(d)d.value='';
+  if(t)t.value='';
+}
+
 // Log it
 function logIt(){
   if(state.sel.length===0)return;
   var note=document.getElementById('ln').value.trim();
   var cultural=document.getElementById('cult-check').checked;
-  var ts=new Date().toISOString();
+  var ts=getLogTimestampISO();
   state.sel.forEach(function(cid){
     var cat=allCats().find(function(c){return c.id===cid;});if(!cat)return;
     var g=GROUPS.find(function(x){return x.id===cat.g;});
@@ -1493,6 +1484,7 @@ function logIt(){
   document.getElementById('ln').value='';
   document.getElementById('cult-check').checked=false;
   document.getElementById('cult-note').style.display='none';
+  clearLogDateTime();
   state.sel=[];
   // Close cats section
   var sec=document.getElementById('cats-section');
