@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pattern Journal">
+<title>Pattern Journal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap');
+:root{
+  --bg:#f7f4ef;
+  --surface:#ffffff;
+  --text:#2f2a24;
+  --muted:#8a7f73;
+  --border:#e6ded4;
+  --accent:#c7a98b;
+  --accent-d:#f0e8dc;
+  --accent-m:#b08060;
+  --dim:#b0a898;
+  --card:#faf7f3;
+  --safe:#7a9e8a;
+  --safe-d:#e8f4ee;
+
+  /* group colors - softened for light bg */
+  --g1:#c17a5a;--g1d:#faeee8;--g1m:#a05a3a;
+  --g2:#7a9e8a;--g2d:#e8f4ee;--g2m:#5a7e6a;
+  --g3:#9e7ab0;--g3d:#f0eaf8;--g3m:#7a5a90;
+  --g4:#b89060;--g4d:#f8f0e0;--g4m:#987040;
+  --g5:#7a9eb0;--g5d:#e8f2f8;--g5m:#5a7e90;
+  --g6:#b07a7a;--g6d:#f8eeee;--g6m:#905a5a;
+  --g7:#90b07a;--g7d:#eef5e8;--g7m:#70904a;
+  --g8:#b0907a;--g8d:#f5eee8;--g8m:#907060;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.hdr{padding:48px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:100}
+.hdr-left{}
+.hdr-eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.hdr-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:300;font-style:italic;color:var(--accent-m);line-height:1}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.key-btn{background:none;border:1px solid var(--border);border-radius:20px;color:var(--muted);cursor:pointer;font-size:13px;padding:5px 11px;font-family:'DM Sans',sans-serif;font-size:12px}
+.key-btn:hover{border-color:var(--accent);color:var(--accent-m)}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:200}
+.nbt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);transition:color .15s}
+.nbt .ni{font-size:16px;line-height:1}
+.nbt.on{color:var(--accent-m)}
+
+/* PAGES */
+.pg{display:none;padding:0 0 90px 0;min-height:100vh}
+.pg.on{display:block}
+
+/* TOAST */
+.tst{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);font-family:'DM Mono',monospace;font-size:11px;padding:8px 18px;border-radius:20px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:500;white-space:nowrap}
+.tst.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* KEY OVERLAY */
+.key-overlay{display:none;position:fixed;inset:0;background:rgba(47,42,36,.4);z-index:400;align-items:flex-end;justify-content:center}
+.key-overlay.on{display:flex}
+.key-panel{background:var(--surface);border-radius:16px 16px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;max-height:70vh;overflow-y:auto}
+.key-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:300;font-style:italic;color:var(--accent-m);margin-bottom:6px}
+.key-sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.key-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.key-row:last-child{border-bottom:none}
+.key-code{font-family:'DM Mono',monospace;font-size:11px;font-weight:400;color:var(--surface);background:var(--accent-m);border-radius:4px;padding:3px 8px;flex-shrink:0;min-width:40px;text-align:center;letter-spacing:.05em}
+.key-def{font-size:13px;color:var(--text);line-height:1.5}
+.key-def strong{font-weight:500}
+.key-close{width:100%;margin-top:20px;padding:12px;border-radius:8px;border:none;background:var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer}
+
+/* LOG TAB */
+.log-welcome{padding:20px 20px 0;margin-bottom:4px}
+.log-welcome-text{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:16px;color:var(--muted);line-height:1.6}
+.log-form{padding:0 16px 0}
+.log-ta-wrap{margin:12px 0 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px}
+.log-ta{width:100%;background:transparent;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;resize:none;outline:none;height:80px;line-height:1.6}
+.log-ta::placeholder{color:var(--dim);font-style:italic}
+.log-ta-footer{display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:8px;border-top:1px solid var(--border)}
+.cultural-check{display:flex;align-items:center;gap:7px;cursor:pointer;flex:1}
+.cultural-check input{width:14px;height:14px;accent-color:var(--accent-m);cursor:pointer;flex-shrink:0}
+.cultural-check-label{font-size:12px;color:var(--muted);line-height:1.4}
+.cultural-check-note{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.4;font-style:italic}
+.show-cats-btn{background:none;border:1px solid var(--border);border-radius:20px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 14px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.show-cats-btn.open{background:var(--accent-d);border-color:var(--accent);color:var(--accent-m)}
+
+.cats-section{overflow:hidden;transition:max-height .3s ease;max-height:0}
+.cats-section.open{max-height:3000px}
+
+.multi-chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px 16px 0;min-height:0}
+.mchip{font-family:'DM Mono',monospace;font-size:9px;padding:3px 9px;border-radius:10px;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.mchip-x{background:none;border:none;color:inherit;cursor:pointer;font-size:12px;padding:0;opacity:.6}
+
+.log-status{font-family:'DM Mono',monospace;font-size:10px;color:var(--dim);padding:4px 16px;min-height:16px}
+
+.log-save-btn{display:block;width:calc(100% - 32px);margin:10px 16px 6px;padding:13px;border-radius:10px;border:none;background:var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;cursor:not-allowed;transition:all .2s}
+.log-save-btn.active{background:var(--accent-m);color:#fff;cursor:pointer}
+
+.recent-used{padding:6px 16px 0}
+.recent-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.recent-chips{display:flex;flex-wrap:wrap;gap:5px}
+.recent-chip{font-family:'DM Mono',monospace;font-size:9px;padding:4px 10px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);cursor:pointer;letter-spacing:.04em}
+.recent-chip:hover{border-color:var(--accent);color:var(--accent-m)}
+
+/* CATEGORY GROUPS */
+.cs{padding:0 16px}
+.csh{display:flex;align-items:center;gap:8px;padding:11px 0 5px;cursor:pointer;user-select:none}
+.csd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.csn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;flex:1;color:var(--muted)}
+.csc{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim)}
+.cst{font-size:10px;color:var(--dim);transition:transform .2s;display:inline-block}
+.cst.op{transform:rotate(90deg)}
+.cg{display:flex;flex-direction:column;gap:3px;overflow:hidden;transition:max-height .3s ease;margin-bottom:4px}
+.ci{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;background:var(--surface);text-align:left;width:100%}
+.ci.sel{border-color:var(--border)}
+.cin{font-size:13px;color:var(--text);flex:1;line-height:1.4}
+.cii{background:var(--accent-d);border:1px solid var(--accent);border-radius:4px;color:var(--accent-m);cursor:pointer;font-size:10px;padding:2px 7px;flex-shrink:0;font-family:'DM Mono',monospace;font-weight:400}
+.ci-pin{background:none;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:2px 4px;opacity:.6}
+.ci-remove{color:var(--muted);font-size:14px;opacity:.5;line-height:1}
+.ci-remove:hover{opacity:1;color:#c05050}
+.in-log-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--safe);letter-spacing:.08em;margin-top:10px}
+.ci-pin:hover{opacity:1}
+
+/* PINNED SECTION */
+.pinned-section{padding:0 16px;margin-top:4px}
+.pinned-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent-m);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;padding-top:8px}
+
+/* FEED / HISTORY */
+.fhd{padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between}
+.fl{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+.fc{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
+.en{margin:0 16px 8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.est{width:2px;min-height:32px;border-radius:2px;flex-shrink:0;align-self:stretch;opacity:.7}
+.eb{flex:1;min-width:0}
+.et{display:flex;align-items:flex-start;gap:6px;margin-bottom:3px;flex-wrap:wrap}
+.eg{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.egr{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim)}
+.etm{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);margin-left:auto;white-space:nowrap}
+.eno{font-size:13px;color:var(--muted);line-height:1.6;font-weight:300;margin-top:3px}
+.ecult{font-family:'DM Mono',monospace;font-size:8px;color:var(--safe);margin-top:2px;letter-spacing:.05em}
+.ea{display:flex;gap:4px;flex-shrink:0;flex-direction:column}
+.ebt{background:none;border:none;color:var(--dim);cursor:pointer;font-size:11px;padding:3px;border-radius:3px}
+.ebt.del:hover{color:#c05050}
+.een{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;resize:none;margin-top:6px;line-height:1.5}
+.ees{margin-top:6px;padding:6px 14px;border-radius:6px;border:none;background:var(--accent-m);color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.emp{padding:48px 16px;text-align:center;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15px;color:var(--dim)}
+
+/* SEARCH BAR */
+.srch{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;background:var(--bg)}
+.si{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;padding:8px 14px;outline:none}
+.si::placeholder{color:var(--dim);font-style:italic}
+.sc-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:4px}
+
+/* DATE FILTER */
+.dfb{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--bg)}
+.di{background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:10px;padding:5px 8px;outline:none}
+.dl{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.dc-btn{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent-m);background:none;border:none;cursor:pointer;padding:4px 8px}
+
+/* IDENTIFY TAB */
+
+/* LEARN TAB (formerly Definitions) */
+.def-toggle-bar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.def-toggle-label{font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif}
+.toggle-sw{position:relative;width:36px;height:20px;cursor:pointer}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-sw .slider{position:absolute;inset:0;background:var(--border);border-radius:20px;transition:.2s}
+.toggle-sw input:checked+.slider{background:var(--accent-m)}
+.toggle-sw .slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+.toggle-sw input:checked+.slider:before{transform:translateX(16px)}
+.dsr{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg)}
+.dsi{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;padding:8px 14px;outline:none}
+.dsi::placeholder{color:var(--dim);font-style:italic}
+.dsr-prominent{padding:14px 16px 10px;background:var(--bg)}
+.dsi-prominent{width:100%;background:var(--surface);border:1.5px solid var(--accent);border-radius:24px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:300;padding:11px 18px;outline:none;transition:border-color .2s;box-shadow:0 1px 4px rgba(199,169,139,.15)}
+.dsi-prominent:focus{border-color:var(--accent-m);box-shadow:0 2px 8px rgba(176,128,96,.2)}
+.dsi-prominent::placeholder{color:var(--dim);font-style:italic}
+.dgt{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:300;font-style:italic;padding:18px 16px 8px;border-bottom:1px solid var(--border);color:var(--muted)}
+.dc2{border-bottom:1px solid var(--border)}
+.dch{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer}
+.dcd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dcn{font-size:13px;color:var(--text);flex:1;line-height:1.3}
+.dct{font-size:10px;color:var(--dim);transition:transform .2s;display:inline-block}
+.dct.op{transform:rotate(180deg)}
+.dcb{padding:0 16px 14px;display:none}
+.dcb.op{display:block}
+.dsl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;margin-top:11px}
+.dsl:first-child{margin-top:0}
+.dtx{font-size:13px;color:var(--muted);line-height:1.7;font-weight:300}
+.dex{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:13px;color:var(--text);line-height:1.6;background:var(--card);border-left:2px solid var(--border);padding:8px 12px;border-radius:0 5px 5px 0;margin-top:5px;margin-bottom:4px}
+.dsc{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:14px;color:var(--accent-m);line-height:1.6;background:var(--accent-d);border-left:2px solid var(--accent);padding:8px 12px;border-radius:0 5px 5px 0;margin-top:5px}
+.deeper-btn{margin-top:10px;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.deeper-btn:hover{border-color:var(--accent);color:var(--accent-m)}
+.deeper-block{margin-top:8px;padding:12px;background:var(--card);border-radius:8px;border:1px solid var(--border);display:none}
+.deeper-block.op{display:block}
+.add-log-btn{margin-top:10px;padding:7px 14px;border-radius:20px;border:none;background:var(--accent-d);color:var(--accent-m);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.cat-note-area{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+.cat-note-ta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;resize:none;line-height:1.5;min-height:60px}
+.cat-note-ta::placeholder{color:var(--dim);font-style:italic}
+.cat-note-btn{margin-top:6px;padding:6px 14px;border-radius:6px;border:none;background:var(--accent-m);color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.def-disc{padding:14px 16px;margin:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.7}
+.def-disc-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.def-group-hdr{display:flex;align-items:center;gap:8px;padding:12px 16px 10px;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);background:var(--card)}
+.def-group-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;flex:1}
+.def-group-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim)}
+.def-group-arrow{font-size:12px;color:var(--dim);transition:transform .2s;display:inline-block}
+.def-group-arrow.op{transform:rotate(90deg)}
+
+/* INSIGHTS / STATS */
+.stl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:18px 16px 6px}
+.sgr{display:flex;flex-wrap:wrap;padding:0 16px;gap:8px}
+.sc2{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;flex:1;min-width:120px}
+.scl{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.scv{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:300;color:var(--text)}
+.scs{font-size:11px;color:var(--muted);margin-top:2px}
+.fr{display:flex;align-items:center;gap:10px;padding:7px 16px}
+.fd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.fla{font-size:12px;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fbt{flex:2;background:var(--border);border-radius:4px;height:4px;overflow:hidden}
+.fbf{height:100%;border-radius:4px;transition:width .3s}
+.fnu{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);min-width:24px;text-align:right}
+.eb2{display:block;margin:4px 16px;padding:10px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;width:calc(100% - 32px);text-align:left}
+.eb2:hover{border-color:var(--accent);color:var(--accent-m)}
+.ccf{padding:0 16px}
+.cci{display:block;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none;margin-bottom:8px;line-height:1.5}
+.ccs{display:block;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:9px 12px;outline:none;margin-bottom:8px}
+.ccb{width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent-m);color:#fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;margin-bottom:8px}
+.ccl{padding:8px 16px}
+.cci2{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
+.cin2{font-size:13px;color:var(--text)}
+.cdl{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 6px}
+.cdl:hover{color:#c05050}
+
+/* GLOSSARY */
+.gl-wrap{}
+.gl-disc{padding:14px 16px;margin:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.7}
+.gl-disc-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(47,42,36,.35);z-index:300;overflow-y:auto;padding:20px 16px 40px;-webkit-overflow-scrolling:touch}
+.mo.op{display:block}
+.mc{background:var(--surface);border-radius:14px;padding:20px;max-width:480px;margin:0 auto}
+.mt{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:300;font-style:italic;margin-bottom:2px}
+.mg{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+.msl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;margin-top:12px}
+.msl:first-child{margin-top:0}
+.mtx{font-size:13px;color:var(--muted);line-height:1.7;font-weight:300}
+.mex{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:13px;color:var(--text);line-height:1.6;background:var(--card);border-left:2px solid var(--border);padding:8px 12px;border-radius:0 5px 5px 0;margin-top:5px;margin-bottom:4px}
+.msc{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:14px;color:var(--accent-m);line-height:1.6;background:var(--accent-d);border-left:2px solid var(--accent);padding:8px 12px;border-radius:0 5px 5px 0;margin-top:5px}
+.mo-close{width:100%;margin-top:16px;padding:12px;border-radius:8px;border:none;background:var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer}
+
+/* QUICK LOG MODAL */
+.ql-mo{display:none;position:fixed;inset:0;background:rgba(47,42,36,.35);z-index:300;-webkit-overflow-scrolling:touch;overflow-y:auto;padding:20px 16px 40px}
+.ql-mo.op{display:block}
+.ql-mc{background:var(--surface);border-radius:14px;padding:20px;max-width:480px;margin:0 auto}
+.ql-list{margin-bottom:12px}
+.ql-gl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 0 4px}
+.ql-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid transparent;background:var(--card);cursor:pointer;width:100%;text-align:left;margin-bottom:4px;transition:all .12s}
+.ql-btn.on{}
+.ql-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ql-btn-name{font-size:12px;color:var(--text)}
+.ql-note{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 12px;outline:none;resize:none;height:70px;line-height:1.5;margin-bottom:10px}
+.ql-note::placeholder{color:var(--dim);font-style:italic}
+.ql-sub{width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent-m);color:#fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer}
+.ql-sub.off{background:var(--border);color:var(--dim);cursor:not-allowed}
+
+/* CULTURAL FILTER */
+.cult-filter-bar{padding:6px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.cult-filter-label{font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;flex:1}
+.cult-filter-opts{display:flex;gap:6px}
+.cult-opt{font-family:'DM Mono',monospace;font-size:8px;padding:4px 9px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--dim);cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.cult-opt.on{background:var(--safe-d);border-color:var(--safe);color:var(--safe)}
+
+/* BACK-LOG DATE BAR */
+.bl-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+
+/* MISC */
+.sect-divider{height:1px;background:var(--border);margin:4px 16px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-eye">Pattern Journal</div>
+    <div class="hdr-name">You're safe here.</div>
+  </div>
+  <div class="hdr-right">
+    <button class="key-btn" onclick="openKey()">🔑 Key</button>
+  </div>
+</div>
+
+<!-- KEY OVERLAY -->
+<div class="key-overlay" id="key-overlay" onclick="keyOvClick(event)">
+  <div class="key-panel">
+    <div class="key-title">Role key</div>
+    <div class="key-sub">These abbreviations appear throughout the app in place of names and gendered terms.</div>
+    <div class="key-row"><span class="key-code">N</span><div class="key-def"><strong>N</strong> — the narcissist. The person whose patterns are being tracked.</div></div>
+    <div class="key-row"><span class="key-code">T</span><div class="key-def"><strong>T</strong> — the target. The person on the receiving end of the behavior.</div></div>
+    <div class="key-row"><span class="key-code">AC</span><div class="key-def"><strong>AC</strong> — adult child. N's adult child.</div></div>
+    <div class="key-row"><span class="key-code">ACP</span><div class="key-def"><strong>ACP</strong> — adult child's partner. AC's partner.</div></div>
+    <div class="key-row"><span class="key-code">NP</span><div class="key-def"><strong>NP</strong> — narcissist's partner. N's partner.</div></div>
+    <button class="key-close" onclick="closeKey()">Close</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="tst" id="tst"></div>
+
+<!-- DETAIL MODAL -->
+<div class="mo" id="mo" onclick="cmO(event)">
+  <div class="mc" id="mc"></div>
+</div>
+
+<!-- QUICK LOG MODAL -->
+<div class="ql-mo" id="ql-mo" onclick="if(event.target===this)this.classList.remove('op')">
+  <div class="ql-mc" id="ql-mc"></div>
+</div>
+
+<!-- === LOG TAB === -->
+<div class="pg on" id="pg-log">
+  <div class="log-welcome">
+    <div class="log-welcome-text">You're safe here. Just log what stood out — nothing has to be perfect.</div>
+  </div>
+
+  <div class="log-form">
+    <div class="log-ta-wrap">
+      <textarea class="log-ta" id="ln" placeholder="What stood out? (optional)" oninput="uForm()"></textarea>
+      <div class="log-ta-footer">
+        <label class="cultural-check" id="cult-label">
+          <input type="checkbox" id="cult-check">
+          <span class="cultural-check-label">Culturally influenced / ambiguous</span>
+        </label>
+        <button class="show-cats-btn" id="show-cats-btn" onclick="toggleCats()">Show categories</button>
+      </div>
+      <div class="cultural-check-note" id="cult-note" style="display:none">Cultural context matters — behavior may be neutral depending on intent and background.</div>
+    </div>
+
+    <div class="multi-chips" id="multi-chips"></div>
+    <div class="log-status" id="lfs">Tap what feels closest (you can't get it wrong)</div>
+
+    <div class="cats-section" id="cats-section">
+      <div id="cats"></div>
+    </div>
+
+    <button class="log-save-btn" id="lb" onclick="logIt()" disabled>Save moment</button>
+
+    <div id="recent-used-wrap"></div>
+  </div>
+
+  <div class="sect-divider"></div>
+
+  <div class="fhd">
+    <span class="fl">Recent moments</span>
+    <span class="fc" id="tc">0</span>
+  </div>
+  <div id="feed"></div>
+</div>
+
+<!-- === LEARN TAB === -->
+<div class="pg" id="pg-def">
+  <div class="dsr-prominent"><input class="dsi-prominent" id="def-search" placeholder="Search behaviors..." oninput="fd(this.value)" autocomplete="off"></div>
+  <div class="def-toggle-bar">
+    <label class="toggle-sw"><input type="checkbox" id="def-detail-toggle" onchange="renderDefs('')"><span class="slider"></span></label>
+    <span class="def-toggle-label">Show detailed view</span>
+  </div>
+  <div id="defc"></div>
+</div>
+
+<!-- === INSIGHTS TAB === -->
+<div class="pg" id="pg-st">
+  <div id="stp"></div>
+</div>
+
+<!-- === HISTORY TAB === -->
+<div class="pg" id="pg-hist">
+  <div class="srch">
+    <input class="si" id="hist-q" placeholder="Search moments..." oninput="renderHistory()">
+    <button class="sc-btn" onclick="clearHQ()">✕</button>
+  </div>
+  <div class="cult-filter-bar">
+    <span class="cult-filter-label">Filter</span>
+    <div class="cult-filter-opts">
+      <button class="cult-opt on" id="cf-all" onclick="setCultFilter('all')">All</button>
+      <button class="cult-opt" id="cf-cult" onclick="setCultFilter('cult')">🌿 Cultural</button>
+    </div>
+  </div>
+  <div class="dfb">
+    <span class="dl">From</span>
+    <input class="di" type="date" id="hist-df" onchange="renderHistory()">
+    <span class="dl">To</span>
+    <input class="di" type="date" id="hist-dt" onchange="renderHistory()">
+    <button class="dc-btn" onclick="clearHistDates()">Reset</button>
+  </div>
+  <div class="fhd">
+    <span class="fl" id="hist-fl">0 moments</span>
+    <button class="dc-btn" onclick="genSummary()">+ Summary</button>
+  </div>
+  <div id="hist-feed"></div>
+</div>
+
+<!-- === GLOSSARY TAB === -->
+<div class="pg" id="pg-gl">
+  <div id="glp"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="nbt on" id="nb-log" onclick="sw('log')"><span class="ni">✎</span>Log</button>
+  <button class="nbt" id="nb-def" onclick="sw('def')"><span class="ni">◈</span>Learn</button>
+  <button class="nbt" id="nb-hist" onclick="sw('hist')"><span class="ni">⊟</span>History</button>
+  <button class="nbt" id="nb-gl" onclick="sw('gl')"><span class="ni">◎</span>Glossary</button>
+  <button class="nbt" id="nb-st" onclick="sw('st')"><span class="ni">✦</span>Insights</button>
+</nav>
+
+<script>
+// ============================================================
+// NEW GROUP STRUCTURE (4 merged groups)
+// ============================================================
+var GROUPS=[
+  {id:'attention',name:'Attention & Control',c:1},
+  {id:'narrative',name:'Narrative & Credit',c:3},
+  {id:'rejection',name:'Rejection & Deflection',c:4},
+  {id:'relationship',name:'Relationship Specific',c:6}
+];
+
+// Original group → new group mapping
+var GROUP_MAP={
+  'attention':'attention',
+  'hierarchy':'attention',
+  'credit':'narrative',
+  'deflection':'rejection',
+  'rejection':'rejection',
+  'hm':'relationship',
+  'he':'relationship',
+  'new':'relationship'
+};
+
+// Color maps (indices 1-4 for our 4 new groups, plus extras for backwards compat)
+var GC={1:'var(--g1)',2:'var(--g2)',3:'var(--g3)',4:'var(--g4)',5:'var(--g5)',6:'var(--g6)',7:'var(--g7)',8:'var(--g8)'};
+var GCD={1:'var(--g1d)',2:'var(--g2d)',3:'var(--g3d)',4:'var(--g4d)',5:'var(--g5d)',6:'var(--g6d)',7:'var(--g7d)',8:'var(--g8d)'};
+var GCM={1:'var(--g1m)',2:'var(--g2m)',3:'var(--g3m)',4:'var(--g4m)',5:'var(--g5m)',6:'var(--g6m)',7:'var(--g7m)',8:'var(--g8m)'};
+function gColor(gid){var g=GROUPS.find(function(x){return x.id===gid;});return g?g.c:1;}
+
+// Core behaviors shown by default in Log tab (8 per group)
+var CORE_CATS={
+  attention:['att-rec','con-int','cvt-sur','escl-conf','feign-con','home-dir','non-apo','uns-adv'],
+  narrative:['acc-min','bck-hnd','crd-red','cur-nar','exc-app','exp-own','nar-rev','nvb-edi'],
+  rejection:['bod-sur','perf-inq','ref-rec','sel-ret','str-omi','wrm-dis','wgt-sil','wthld-ack'],
+  relationship:['hm-car','they-def','they-dec','opn-dis','hm-rol','they-sen','soc-iso','they-spk']
+};
+function isCore(cid){return Object.values(CORE_CATS).some(function(arr){return arr.indexOf(cid)!==-1;});}
+function isAdded(cid){return state.addedCats.indexOf(cid)!==-1;}
+function isHidden(cid){return state.hiddenCore.indexOf(cid)!==-1;}
+function isVisibleInLog(cat){
+  if(isCore(cat.id))return !isHidden(cat.id);
+  return isAdded(cat.id);
+}
+</script>
+<script>
+var CATS=[
+
+// ============================================================
+// ATTENTION & CENTRALITY
+// ============================================================
+
+{id:'p-startle',g:'rejection',l:'Performative startle',
+w:'A scream or startled reaction disproportionate to the actual stimulus. The room reorganizes around N\'s in under a second -- everyone stops, orients, tends.',
+ex:'Someone walks into the room normally. N screams. Everyone rushes over.',
+int:'Genuine startle scales with actual threat. This does not. You are not required to tend to it.',
+sc:['Let others respond. Keep your energy level.'],
+correction:'Do not rush toward them. Keep doing what you were doing. Let the room reorganize without you. Over time your non-response removes the reinforcement.'},
+
+{id:'v-self',g:'attention',l:'Vulnerable self-presentation',
+w:'Strategic self-deprecation that bids for centrality. The self-criticism is the vehicle. The destination is the room reorganizing around them. Includes ambient self-deprecation framed as humility and self-talk that waits for the room to contradict it.',
+ex:'Mine is probably not as good as yours -- can you taste it and tell me what is wrong? Also captures: sighing about how N is getting old, laughing about how N always does something wrong.',
+int:'You are not obligated to be N\'s evaluator. The humility is performed, not felt.',
+sc:['"I\'m sure it\'s good." (warm, closed)','"I\'ll have to try it another time."'],
+correction:'One warm neutral response is enough. Do not expand into the invitation. Do not contradict the self-deprecation with reassurance -- that is the response N is looking for.'},
+
+{id:'cap-aud',g:'attention',l:'Captive audience enforcement',
+w:'Delivers monologues and punishes interruption with guilt. Also captures the unfunny funny story -- narrating something as funny that is not, requiring the room to perform amusement as a compliance test. If no one laughs N registers the room as unengaged.',
+ex:'N is mid-story. Someone adds context. "I guess nobody wants to hear what I have to say." Also: N tells a story about a minor inconvenience, laughing throughout, and waits for the room to laugh.',
+int:'This is not a conversation. It is a performance with a required audience. The unfunny story is a social compliance test. You are not required to perform.',
+sc:['Let N\'s finish. Do not fill the silence after. Do not over-validate.','For unfunny stories: smile politely. Do not force a laugh. Do not explain why it was not funny.'],
+correction:'Do not interrupt. Do not perform the required response beyond a minimal acknowledgment. One "mm" is enough. Do not escalate your engagement to match N\'s expectation.',
+foldNote:'Also captures: unfunny funny story -- narrating something as funny that is not, requiring the room to perform amusement.'},
+
+{id:'att-rec',g:'attention',l:'Attention reclamation',
+w:'Redirects focus back to themself when someone else is receiving strong positive engagement from the room.',
+ex:'A guest is telling a great story. N finds a reason to speak, introduce a topic, or need something.',
+int:'N can share the room up to a threshold. Watch where that threshold is.',
+sc:['Let the other person\'s moment land fully. Do not help redirect.'],
+correction:'Do not assist the redirect. Stay engaged with the person who was speaking. The redirect only works if the room follows it.'},
+
+{id:'con-int',g:'attention',l:'Connection interruption',
+w:'Inserts themself physically or verbally into moments when ACP and AC are most connected. Responsive, not random -- N tracks the temperature and moves when it peaks.',
+ex:'ACP and AC are laughing together. N calls NP\'s name, needs something, introduces a topic.',
+int:'The interruption tells you how strong your bond reads to others. Finish the moment before orienting to them.',
+sc:['Slow your response time. Do not abandon the connection immediately.'],
+correction:'Finish your moment with AC before turning toward them. A two-second delay is enough. Over time this signals that your connection is not interruptible on demand.'},
+
+{id:'bib-auth',g:'attention',l:'Spiritual or intellectual authority display',
+w:'References biblical knowledge or spiritual wisdom accumulated through suffering. The humility wrapper makes the authority claim unchallengeable. You cannot push back on someone\'s hard-earned wisdom without appearing to dismiss their pain.',
+ex:'"I have learned so much in my old age. God has shown me things through everything I have been through."',
+int:'The suffering is real. The deployment of it as authority is strategic. You do not have to perform reverence.',
+sc:['"Mm." (receive it without expanding it)'],
+correction:'Acknowledge without expanding. Do not invite elaboration. Do not produce the spiritual engagement N is positioning themself to receive.'},
+
+{id:'mfg-urgency',g:'rejection',l:'Manufactured urgency',
+w:'Creates a sudden need, question, or minor crisis specifically when the room\'s attention has been away from N\'s for longer than N can tolerate. Not tied to AC specifically -- fires whenever N has been out of the center.',
+ex:'ACP and AC are having a good conversation. N suddenly needs help with something, has an urgent question, or develops a minor physical complaint that requires attention.',
+int:'The timing is the data. The need is real enough to be deniable but the pattern is consistent. You are not required to interrupt what you are doing.',
+sc:['Let others respond if they choose. Finish your moment first. "One sec." and return to what you were doing is complete.'],
+correction:'Do not immediately orient toward the urgency. Complete what you were doing first. Over time your delayed response removes the reliability of the interruption.'},
+
+{id:'comp-fish',g:'attention',l:'Compliment fishing',
+w:'Narrates N\'s own achievements, efforts, or qualities in a way that pauses and waits for the room to validate them. Uses positive self-narration rather than self-deprecation but has the same destination.',
+ex:'Describes at length something N accomplished, cooked, organized, or endured -- then goes quiet and looks around the room.',
+int:'The pause is the ask. You are not required to fill it. Receiving the story without producing the compliment is allowed.',
+sc:['"Mm." or "That sounds like a lot of work." Warm, brief, closed.'],
+correction:'Receive the story without producing the validation N is waiting for. One flat warm response is enough. Do not over-praise.'},
+
+{id:'jinx-energy',g:'rejection',l:'Jinx energy',
+w:'Performs affection toward animals or others in a way oriented at the room rather than at the subject. Engages as display. Signals discomfort with actual contact. The subject of the affection registers the difference.',
+ex:'Makes sounds toward Jinx, says how cute N is, performs delight -- but when actual physical contact would happen there is a subtle pull back or do-not-touch energy underneath.',
+int:'Animals respond to nervous system regulation, not performance. Jinx keeps N\'s distance for accurate reasons. Trust what Jinx tells you.',
+sc:['No response needed. Observe and log.'],
+correction:'You cannot correct performative affection. You can observe it clearly and not perform reciprocal warmth toward the display.'},
+
+{id:'emot-hijack',g:'attention',l:'Emotional hijacking of celebrations',
+w:'Makes N\'s emotional reaction the centerpiece of someone else\'s good news. N\'s response is so large -- tearful, overwhelmed, dramatic -- that the celebrant ends up tending to N\'s rather than being celebrated.',
+ex:'ACP shares news about a new job. N\'s response becomes so emotional that the conversation shifts to managing N\'s feelings rather than acknowledging ACP.',
+int:'Your news belongs to you. N\'s reaction to it does not entitle N\'s to the center of the moment.',
+sc:['Let N\'s response land without absorbing it. Redirect to the people whose responses are actually for you.'],
+correction:'Receive congratulations from the people giving them. Do not tend to N\'s emotional response to your news. Turn toward others.'},
+
+{id:'val-loop',g:'narrative',l:'Validation loop / story repetition',
+w:'Repeats the same story, point, or concern multiple times in one conversation until the room produces sufficient acknowledgment. Not memory lapse -- the loop continues until N gets what N needs. Also captures the unfunny funny story repetition.',
+ex:'Tells the same story twice in one evening. Returns to the same point three times after it has already been acknowledged.',
+int:'One acknowledgment is enough. You are not required to produce fresh engagement each time the loop returns.',
+sc:['"You mentioned that earlier." said warmly once. Or give the same flat warm response each time without escalating.'],
+correction:'Do not produce escalating engagement each time the loop returns. The same minimal response each cycle teaches the loop that repetition does not produce more.',
+foldNote:'Also captures: ambient distress signaling -- unprompted sighs or sounds of exhaustion that function as nonverbal validation bids.'},
+
+// ============================================================
+// HIERARCHY & AUTHORITY
+// ============================================================
+
+{id:'cvt-pos',g:'rejection',l:'Covert positioning',
+w:'Hierarchy plays with plausible deniability. The move serves N\'s positioning while leaving nothing to be held accountable for if named.',
+ex:'Offers help you did not ask for in a way that implies you needed it.',
+int:'Name it internally. You do not have to respond to the surface. Respond to your own clarity.',
+sc:['Stay warm. Stay unbothered. No verbal response required.','"Mm." (acknowledge without engaging the frame)'],
+correction:'Do not take the bait. Receiving a covert positioning move with flat warmth is itself a response. You do not have to engage the frame it creates.'},
+
+{id:'hie-res',g:'attention',l:'Hierarchy reset via warmth',
+w:'Uses affectionate language to reestablish themself as the senior person in the room. The warmth is real but administered from above. Also captures grading behavior -- "okay, good ACP" with claps -- approval dispensed from a position of evaluation.',
+ex:'"Thanks kids." After a dinner you cooked in your home. Also: "okay, good ACP" with smirk and small claps after being told ACP installed the sink filter.',
+int:'The word "kids" did structural work. The clapping did structural work. You felt it. You do not have to name it -- just know what it was.',
+sc:['"Mmhm." (neutral acknowledgment)','Smile and redirect.'],
+correction:'Receive without matching energy. Do not thank N\'s for the "compliment." A flat warm acknowledgment is sufficient and does not co-sign the hierarchy.'},
+
+{id:'ass-ign',g:'attention',l:'Assumed ignorance projection',
+w:'Explains things as if it is everyone\'s first time hearing it because N did not know it, so no one could have known it before them. An intellectual authority move dressed as sharing.',
+ex:'Explains a basic cooking technique to a room of adults who all already knew it.',
+int:'You do not have to perform surprise or gratitude.',
+sc:['"Yeah, I\'ve come across that." (matter of fact, no elaboration)'],
+correction:'A flat acknowledgment that signals prior knowledge without correction. "I\'ve read about that" said once closes the loop without humiliating them.'},
+
+{id:'rap-sta',g:'attention',l:'Rapid status filing',
+w:'Establishes credentials or background early when meeting someone new. Files N\'s position before the relationship can form organically.',
+ex:'Within the first few minutes: where N is from, what N did professionally, what N has been through.',
+int:'N needs the frame set before impressions form. That urgency is information.',
+sc:['No response required. Observe the sequence.'],
+correction:'You cannot prevent this. You can be present as yourself without performing complementary deference.'},
+
+{id:'sta-ass',g:'attention',l:'Status assessment questioning',
+w:'Asks new people questions that are really hierarchy calculations disguised as interest. N is sorting, not connecting.',
+ex:'Job, family, background questions delivered quickly and early in a new interaction.',
+int:'Watch what shifts in N\'s treatment of the person once the assessment lands.',
+sc:['Observe. Note what changes after N gets N\'s data.'],
+correction:'No direct correction available. Being warm and engaged with the person being assessed regardless of their status outcome is a quiet counter.'},
+
+{id:'cul-aut',g:'attention',l:'Cultural or heritage authority positioning',
+w:'Positions themself as the most authentic cultural or linguistic authority when relevant. With ACP N apologizes for Spanish. With new people N wields it. Same tool, different function depending on who gives N\'s more leverage.',
+ex:'With a new Spanish speaker: leads in Spanish, corrects pronunciation, references regional specifics.',
+int:'Same tool, different function depending on who gives N\'s more leverage.',
+sc:['Speak Spanish naturally if it arises. You do not need to perform or hide fluency.'],
+correction:'Speak Spanish naturally and competently without announcing it. Your fluency is not a competition -- it is just a fact.'},
+
+{id:'uns-adv',g:'attention',l:'Unsolicited advisory',
+w:'Volunteers opinions about your home or choices framed as helpful observation. An authority claim dressed as generosity.',
+ex:'"You know what would be really good here is..." in a space that is working fine.',
+int:'Your home is working fine. You did not ask. You are not required to implement or defend.',
+sc:['"Mm, I\'ll keep that in mind." (warm, noncommittal, closed)','"We like it this way."'],
+correction:'Acknowledge once without committing to implementation. Do not defend your choices against the implied criticism. "We like it this way" is complete.'},
+
+{id:'rhe-q',g:'attention',l:'Rhetorical questioning',
+w:'Asks questions N already knows the answer to. Used to test, display knowledge, or set up a correction.',
+ex:'Asks how you made something N watched you make, or about something N was already told.',
+int:'N is not asking. N is positioning. Answer plainly without over-explaining.',
+sc:['"Yes." / "No." / "Mm-hmm." (brief, warm, closed)'],
+correction:'Brief, accurate answers without elaboration. The less you expand, the less there is to position against.'},
+
+{id:'dia-aut',g:'attention',l:'Diagnostic authority',
+w:'Declares how someone feels or why without confirmation. Supplies the cause and the diagnosis simultaneously, often implicating others in the same breath. N\'s ownership of NP\'s inner experience extends to assigning blame for it.',
+ex:'"He\'s not feeling well because of the butter." (Two tablespoons of butter.)',
+int:'N owns NP\'s inner experience and assigns cause without evidence. The implication of you is the bonus. Do not defend the butter.',
+sc:['No response required. Do not defend the butter.'],
+correction:'Do not engage the diagnosis or the implication. Defending the butter confirms there is something to defend. Silence or subject change is sufficient.'},
+
+{id:'home-dir',g:'attention',l:'Home direction giving',
+w:'Actively directs people within your home -- telling guests where to sit, how things should be done, what the plan is -- as if N has authority over the space. Distinct from unsolicited advisory which is opinions. This is commands.',
+ex:'Tells a guest where to sit. Announces what is happening next. Redirects how something in the kitchen is being done without being asked.',
+int:'N does not live here. Directing people in this space is not N\'s role.',
+sc:['"Actually we usually do it this way." said warmly once.','Or step in quietly and redirect without explanation.'],
+correction:'Speak first. Be the one who directs guests, announces plans, and sets the tone in your own home. Remove the vacuum N fills.'},
+
+{id:'dec-credit',g:'narrative',l:'Decision credit claiming',
+w:'Reframes your autonomous decisions as something N would have suggested, already knew was right, or quietly influenced. Takes credit for your agency without having been involved.',
+ex:'You make a choice. Later: "yes I thought that was the right move" or "I was going to suggest that."',
+int:'Your decisions belong to you. N\'s post-hoc co-signing does not change their origin.',
+sc:['"Mm." and move on. Do not engage the reframe.'],
+correction:'Do not correct the record publicly. Do not explain that it was your idea. Receive N\'s co-sign without validating it as accurate.'},
+
+{id:'fam-hist',g:'narrative',l:'Family historian positioning',
+w:'Self-appoints as the keeper of family memory and the authority on how things really happened. N\'s version of events is positioned as the definitive one.',
+ex:'Corrects others\' accounts of family events. "That\'s not how it happened. What that really meant was..."',
+int:'N is the narrator of a story N also stars in. That is not neutral authority. You are allowed to hold your own version.',
+sc:['"Interesting, I remember it differently." said once, warmly, without elaboration.'],
+correction:'You do not need N\'s version to be officially wrong. Stating your version once and holding it internally is enough.'},
+
+{id:'age-trump',g:'attention',l:'Age/experience trump card',
+w:'Uses life stage or accumulated suffering as an automatic closer on disagreement. "When you get to my age" or "you\'ll understand someday" forecloses the conversation before it can develop.',
+ex:'Someone offers a different perspective. N responds with what age and experience have taught them, positioning N\'s view as beyond challenge.',
+int:'Age is not an argument. Experience does not automatically confer correctness.',
+sc:['"Maybe." said warmly and leave it.'],
+correction:'Receive it without conceding. "Maybe" is not agreement. It is a graceful non-engagement that neither validates the trump card nor invites escalation.'},
+
+{id:'oblig-gen',g:'rejection',l:'Obligating generosity',
+w:'Offers help, gifts, or resources in a way that creates debt rather than warmth. Has an audience, or comes with implicit expectation of return, or is offered in a way that makes declining seem like ingratitude.',
+ex:'Offers something you did not ask for in front of others in a way that makes refusing seem rude. Or does something for you and references it later.',
+int:'Generosity that creates debt is not generosity. Accepting is not agreement to the ledger.',
+sc:['"Thank you." warm and closed. One thank you is enough.'],
+correction:'Receive with one warm acknowledgment. Do not produce effusive gratitude. Do not reference it later as a favor you owe. Let it be given without being owed.'},
+
+// ============================================================
+// CREDIT & NARRATIVE CONTROL
+// ============================================================
+
+{id:'crd-red',g:'narrative',l:'Credit redirection',
+w:'When ACP receives direct praise N finds the seam to redirect it. Amplifies someone else\'s contribution. Does not lie but editorializes.',
+ex:'NP praises ACP directly. N finds AC\'s contribution and makes that the headline instead.',
+int:'NP gave you the credit. You do not need N\'s co-sign.',
+sc:['Receive the original compliment fully. Do not look to N\'s for validation.'],
+correction:'Turn toward the person who gave the compliment. Receive it fully. Do not glance toward N\'s or wait for N\'s endorsement.'},
+
+{id:'inf-app',g:'narrative',l:'Information appropriation',
+w:'Retells your or AC\'s information as if N originated it. The source quietly shifts to N\'s in the retelling.',
+ex:'You told N\'s something last month. N tells the room the same thing this week as if N discovered it.',
+int:'You know where it came from. That is enough.',
+sc:['Do not correct publicly. Save. Note frequency.'],
+correction:'If you choose to address it: "Oh yes -- ACP actually told me about that recently" said warmly by AC is more effective than anything you can say directly.'},
+
+{id:'nar-rev',g:'narrative',l:'Narrative revision',
+w:'Reframes outcomes N did not get so it sounds like the result was N\'s preference all along. N never loses because N rewrites the score.',
+ex:'A plan N pushed for did not happen. Later: "I actually thought the other way was better anyway."',
+int:'You know what happened. The revision does not change it.',
+sc:['Hold the truth internally. Do not correct the record publicly.'],
+correction:'You do not need the official record to reflect what actually happened. Holding the truth privately without requiring N\'s to confirm it is a form of protection.'},
+
+{id:'cur-nar',g:'narrative',l:'Curated family narrative',
+w:'Presents the family in an image-managed way to new people. The story is controlled before they can form their own impressions. Also captures distorted retellings to absent people -- the same events retold with N\'s more central, more sacrificial, or more capable.',
+ex:'Tells a new person about the family\'s accomplishments and closeness, positioning themself centrally. Also: retells a visit to someone who was not there in a version where N hosted.',
+int:'New people get the version N needs them to have. You know the fuller picture.',
+sc:['You do not have to manage or correct the narrative publicly.'],
+correction:'You cannot control what N tells people who are not there. You can be yourself fully with the people who are present so their direct experience of you is not N\'s version.',
+foldNote:'Also captures: distorted retelling to absent people -- retelling events to people who were not there in a version where N is more central or capable.'},
+
+{id:'bck-hnd',g:'narrative',l:'Backhanded compliment',
+w:'Praise with a quiet qualifier buried in it. The compliment is real enough to accept. The qualifier does damage underneath.',
+ex:'"I didn\'t know you could cook like this." "You look so good -- I almost didn\'t recognize you."',
+int:'You can receive the compliment and release the qualifier. You are not required to carry it.',
+sc:['"Thank you." (receive only the compliment, full stop. Do not respond to the qualifier.)'],
+correction:'Receive the compliment with a simple thank you. Do not respond to the qualifier verbally or non-verbally. Not registering it publicly denies it its effect.'},
+
+{id:'cmp-dis',g:'narrative',l:'Comparative dismissal',
+w:'References how things were done better or differently elsewhere when something does not go N\'s way.',
+ex:'"In Mexico City we always did it this way..."',
+int:'A verdict dressed as information. You do not have to receive it as either.',
+sc:['"Mm, interesting." (flat, warm, noncommittal)','"We like how we do it."'],
+correction:'"We like how we do it" said once and return to what you were doing. Do not defend your method against the comparison.'},
+
+{id:'exc-app',g:'narrative',l:'Excitement appropriation',
+w:'When someone else is excited N cuts them off, briefly narrates their excitement as if N shares it, then pivots to themself as the main subject.',
+ex:'NP is excited about something. N interrupts, says "yes yes I know I love that too," then talks about themself.',
+int:'He never gets to fully inhabit NP\'s own moment.',
+sc:['Let the excited person finish. Do not fill the space N creates after.'],
+correction:'When N pivots, redirect back. "You were saying, NP?" returns the floor without confrontation.'},
+
+{id:'aftertho',g:'narrative',l:'Afterthought framing',
+w:'Presents ACP as an intentional inclusion when N was an afterthought. Gets credit for generosity and thoughtfulness without having actually prioritized ACP. The performance of inclusion does the work that actual inclusion did not.',
+ex:'Gets something for AC and adds ACP as an addendum but frames the whole thing as having been planned for both. Acts excited about N\'s own generosity.',
+int:'The performance of inclusion is not inclusion. You do not have to receive it as genuine.',
+sc:['"Oh, that\'s nice." Receive it lightly. Do not match N\'s energy.'],
+correction:'One warm acknowledgment. Do not thank N\'s effusively for something that was not actually for you. The flat warm response signals you received it without being fooled by it.'},
+
+{id:'acc-min',g:'narrative',l:'Accomplishment minimization',
+w:'When ACP shares good news or an achievement, N gives brief surface acknowledgment followed immediately by a redirect -- to a different topic, to themself, or to AC. The accomplishment is received but not held.',
+ex:'ACP mentions N\'s new job. N says congratulations then within seconds is talking about how N\'s own remote work helped N\'s garden and exercise more.',
+int:'You are allowed to hold your own moment. N\'s redirect does not erase what you shared.',
+sc:['Receive congratulations from the people who are actually giving them. Do not chase N\'s back to your news.'],
+correction:'Stay in the moment with the people who are celebrating you. Do not look toward N\'s for validation of your news.'},
+
+{id:'exp-own',g:'narrative',l:'Experience ownership',
+w:'Retells shared experiences -- trips, meals, visits, moments -- as if N was the architect or driving force. N\'s narrative version positions N\'s as central to something that was actually collective or that you or AC created.',
+ex:'Retells a visit to your home as if N hosted it. Describes a meal you cooked as something that happened at a gathering N arranged.',
+int:'You know who made what. The retelling does not change the facts.',
+sc:['Do not correct publicly. Save.'],
+correction:'If the retelling reaches you through others, one clarifying sentence is enough. "Actually that was at our place and ACP cooked." Said once, warmly, closes the record.'},
+
+// ============================================================
+// REJECTION & WITHHOLDING
+// ============================================================
+
+{id:'wrm-dis',g:'rejection',l:'Warmth/distance switch',
+w:'Alternates closeness and coldness unpredictably. The warmth is never stable enough to fully trust. The distance is never speakable.',
+ex:'Warm and engaged one moment. Noticeably cooler the next with no apparent trigger.',
+int:'Both are N\'s regulation tools. You do not have to chase the warmth or manage the distance.',
+sc:['Match warmth when present. Do not pursue it when it withdraws.'],
+correction:'Do not adjust your behavior in response to the switch. Stay consistent. Your consistency makes the switching less effective as a regulation tool.'},
+
+{id:'wgt-sil',g:'rejection',l:'Weighted silence',
+w:'Goes quiet in a way that fills the room after not getting N\'s way. The tell is whether it triggers someone else to repair. Cultural context matters -- silence as conflict avoidance is normative. The diagnostic question is whether the silence is used to produce discomfort in others.',
+ex:'A plan N wanted does not happen. N says nothing but the temperature in the room drops.',
+int:'You are not the target and not the repair person. Watch who moves and what it costs them.',
+sc:['Do not fill the silence. Do not over-warm toward them. Stay even.'],
+correction:'Do not repair. Do not fill the space. Let NP or AC navigate it if they choose. Your non-response gradually removes you as a reliable target for this move.'},
+
+{id:'sub-pen',g:'rejection',l:'Subtle penalty withdrawal',
+w:'Becomes slightly less warm, slightly less engaged after not getting N\'s way. A quiet consequence for whoever crossed them.',
+ex:'After being declined on something N becomes measurably less present for the rest of the evening.',
+int:'The withdrawal is designed to create anxiety around N\'s approval. You do not need it.',
+sc:['Stay even. Do not chase the warmth back. Do not over-perform to recover it.'],
+correction:'Continue at your baseline. Do not perform to recover N\'s warmth. N\'s approval is not the metric you are working toward.'},
+
+{id:'ref-rec',g:'rejection',l:'Refusal to receive',
+w:'Consistently declines what ACP specifically offers while sourcing or accepting the same things from elsewhere. Avoids being placed in a position of gratitude toward ACP in ACP\'s own home.',
+ex:'Declines offered fruit. Buys the same fruit in bulk. Declines the prepared fruit dessert. Three times, one day.',
+int:'Accepting from you would tip the dynamic. N corrects that without saying a single word about it.',
+sc:['Offer once, warmly. Let it go after.'],
+correction:'Offer once. Do not offer again. N\'s repeated decline is information, not an invitation to find a better way to offer.'},
+
+{id:'bod-sur',g:'rejection',l:'Body surveillance',
+w:'Comments on or monitors what ACP eats, drinks, or how much. Makes ACP self-conscious at N\'s own table in N\'s own home.',
+ex:'"Oh you\'re having another one?" said with a light tone.',
+int:'Your body, your table, your choices. You owe no accounting.',
+sc:['"I\'m good, thanks." (warm, closed)','Continue what you were doing without explanation.'],
+correction:'No justification, no explanation. Continue what you were doing. One brief closed response if necessary then move on.'},
+
+{id:'excl-spa',g:'rejection',l:'Exclusionary language',
+w:'Speaks Spanish to create a moment of exclusion first, then performs the apology. The apology is the second half of the same move.',
+ex:'Says something to AC in Spanish that clearly pertains to the room. Then: "Sorry, I don\'t know how to say that in English."',
+int:'The exclusion came first. You caught it. That is the information.',
+sc:['Respond in Spanish if you choose. Or let it go.'],
+correction:'Responding in Spanish -- naturally and without announcement -- signals competence without confrontation. Or receive it flatly and move on.'},
+
+{id:'spa-apo',g:'rejection',l:'Language apology',
+w:'After six years of correction, still apologizes for speaking Spanish to ACP. The apology is not about uncertainty -- it restates a version of ACP N prefers: one who might not fully understand.',
+ex:'"Sorry ACP, I said that in Spanish -- I don\'t know how to say all that in English."',
+int:'This is a narrative N maintains, not a memory lapse. The correction was never the point.',
+sc:['"All good." (flat, warm, move on)','"I understood." (direct, no elaboration)'],
+correction:'Do not re-correct. The correction was never received. A flat "all good" or demonstrating comprehension without comment is more effective than another correction.'},
+
+{id:'str-omi',g:'rejection',l:'Strategic omission',
+w:'Goes noticeably quiet or skirts around a specific topic or person when they are introduced into conversation. Cannot compete with that person\'s position so N exits the subject.',
+ex:'ACP mentions N\'s mom. N goes quiet or quickly redirects.',
+int:'The silence around your mom is information about how N reads that relationship.',
+sc:['You can mention your mom as often as you want. Watch what N does with it.'],
+correction:'Mention your family naturally and consistently. N\'s discomfort with the subject is hers to manage. You do not need to protect N\'s from it.'},
+
+{id:'wthld-ack',g:'rejection',l:'Withheld acknowledgment',
+w:'Specifically withholds a positive response in moments where a normal person would naturally say something. The absence is the move. Your cooking, your home, your work, your effort -- received without the acknowledgment they warrant.',
+ex:'The pasta dinner. NP praised the food directly. N said "yes mmhm" quietly. A normal person at that table would have said something genuine.',
+int:'The silence where a compliment should be is data. You do not need N\'s acknowledgment to know what you did was good.',
+sc:['Receive acknowledgment from the people who gave it. Do not look toward N\'s for validation.'],
+correction:'Orient toward the people who are actually responding to you. N\'s silence loses its power when it is no longer the response you are waiting for.'},
+
+{id:'fam-hier',g:'rejection',l:'Family hierarchy positioning',
+w:'Explicitly or implicitly positions ACP\'s family as less important, less close, or less worthy of engagement. "I am not ready for a relationship with your family" -- your family is something N gets to decide N\'s relationship to on N\'s own timeline.',
+ex:'"I\'m not ready for a relationship with your family." Going quiet when your mom is mentioned. Never asking about your parents or siblings.',
+int:'Your family does not need N\'s readiness to matter. N\'s positioning of them as optional is a statement about N\'s hierarchy, not about your family\'s value.',
+sc:['You are allowed to mention your family as often as you want.'],
+correction:'Do not reduce mentions of your family to manage N\'s comfort. Do not treat them "readiness" timeline as a legitimate framework. Your family exists independently of N\'s schedule.'},
+
+{id:'phys-excl',g:'rejection',l:'Physical warmth exclusion',
+w:'Consistently warm with everyone else in the room while ACP is the specific exception. Not the alternating warmth/distance pattern -- this is targeted consistency. N is warm to the room and specifically not to ACP.',
+ex:'Hugs AC, touches NP affectionately, engages warmly with guests. Does not extend physical warmth to ACP across multiple visits.',
+int:'This is not about you being cold. This is about you being someone N cannot afford to be warm toward without tipping the dynamic.',
+sc:['You do not need N\'s warmth to be comfortable in your own home.'],
+correction:'Do not pursue N\'s physical warmth. Do not signal that its absence affects you. Your comfort in your home does not depend on N\'s extending it to you.'},
+
+{id:'perf-inq',g:'rejection',l:'Performative inquiry / disengagement',
+w:'Asks questions about ACP but visibly disengages when ACP answers. Looking away, minimal response, quick pivot. The question is for appearance, not interest.',
+ex:'Asks how your studies are going. You begin to answer. N looks away, gives a flat "mm," and moves on before you finish.',
+int:'The question was not for you. It was for the room. You are not obligated to perform enthusiasm in response to an inquiry that was never genuinely made.',
+sc:['Answer briefly. Do not expand into the space. One or two sentences and let it land.'],
+correction:'Give brief answers and stop. Do not try to capture N\'s attention with more interesting information. The disengagement is not about what you are saying.'},
+
+{id:'sel-ret',g:'rejection',l:'Selective retention',
+w:'Retains information about ACP that is useful for monitoring or positioning while discarding information that would require treating ACP as a full person worth knowing. Knows too much and nothing at the same time.',
+ex:'Remembers details about your schedule or movements. Does not remember your interests, your work, your preferences after multiple mentions.',
+int:'Being monitored and being known are different things. N monitors you. N does not know you. That gap is intentional.',
+sc:['You do not owe N\'s more information than you choose to give.'],
+correction:'Be selective about what you share. Information you give N\'s will be used for positioning, not for knowing you. Share what you are comfortable having monitored.'},
+
+{id:'diff-warm',g:'rejection',l:'Differential warmth toward AC\'s domain',
+w:'Engages warmly with things that belong to AC in the shared home -- NP\'s equipment, NP\'s spaces, NP\'s routines -- while treating things that are clearly ACP\'s with indifference or mild dismissal.',
+ex:'Admires AC\'s gym equipment enthusiastically. Offers minimal acknowledgment of what ACP has created, installed, or built in the same space.',
+int:'Your home is yours. N\'s warmth toward NP\'s things and indifference toward yours is a territorial statement.',
+sc:['Continue building your home without reference to N\'s assessment of it.'],
+correction:'You do not need N\'s acknowledgment for your domain to be yours. Build and maintain it at the same level regardless of whether N notices.'},
+
+// ============================================================
+// DEFLECTION & AVOIDANCE
+// ============================================================
+
+{id:'non-apo',g:'attention',l:'Non-apology apology',
+w:'"I\'m sorry you felt that way." The form of an apology without the substance. Responsibility quietly transferred outward.',
+ex:'"I\'m sorry, I was just trying to help." "I\'m sorry you took it that way."',
+int:'A real apology contains accountability. This contains an explanation. Those are different.',
+sc:['"Mm." (receive without validating it as a full apology)','Do not say it\'s okay if it was not okay.'],
+correction:'Receive it neutrally without validating it as a real apology. "Mm" is not acceptance. It is acknowledgment without absolution.'},
+
+{id:'NP\'s-gri',g:'narrative',l:'Historical grievance deflection',
+w:'Surfaces an unrelated past event when something in the present does not go N\'s way. Makes the current moment impossible to resolve.',
+ex:'Current issue comes up. Suddenly a thing from two years ago is on the table.',
+int:'The deflection puts everyone on defense. You do not have to litigate the past.',
+sc:['"That\'s a separate conversation." (calm, warm, firm)','Do not engage the historical thread.'],
+correction:'Name the deflection once without engaging the content. "That\'s a separate conversation" and hold. Do not follow the thread into the past.'},
+
+{id:'nvb-edi',g:'narrative',l:'Nonverbal editorializing',
+w:'A breath, a small sound, a quiet "mmm" that communicates displeasure without being speakable or quotable.',
+ex:'A decision is made N did not want. N says nothing but makes a sound the whole room heard.',
+int:'You heard it. So did everyone. N knows that. That is why it works.',
+sc:['Do not respond to the sound. Continue as if it was not there.'],
+correction:'Continue the conversation without acknowledgment. Responding to the sound validates it as communication. Not responding removes its function.'},
+
+{id:'cvt-sur',g:'attention',l:'Covert surveillance glance',
+w:'When N did not originate an idea N goes quiet, then glances at you when N thinks you cannot see. N is gathering data and recalibrating -- highly engaged, not withdrawn.',
+ex:'Someone else\'s idea gets a good reaction. N goes quiet. Then the glance.',
+int:'The silence is calculation. N is figuring out N\'s next move.',
+sc:['Stay natural. Do not signal you caught it. Save.'],
+correction:'Stay natural. Do not signal awareness. The glance is surveillance -- your non-reaction gives N\'s no data to work with.'},
+
+{id:'img-rep',g:'rejection',l:'Image repair via generosity',
+w:'Overcorrects into visible warmth or generosity immediately after showing displeasure. Overwrites the moment so the room\'s last memory of N\'s is warmth.',
+ex:'N was clearly off for twenty minutes. Then: sudden warmth, a generous gesture, a compliment.',
+int:'The generosity is for the room\'s perception of them, not for you.',
+sc:['Receive it warmly. Do not match the elevated energy. Stay even.'],
+correction:'Receive the generosity without treating it as evidence that the earlier behavior did not happen. Both exist. The repair does not erase the pattern.'},
+
+{id:'they-tri',g:'rejection',l:'NP triangulation',
+w:'Pulls NP in as an indirect witness or validator when N does not get N\'s way. He is primed to respond.',
+ex:'Something does not go N\'s way. N makes a comment to NP or gives them a look that recruits them as witness.',
+int:'This is not your conflict to manage. It is a dynamic between N\'s and N\'s family system.',
+sc:['Do not insert yourself. Let NP navigate NP\'s own lane.'],
+correction:'Do not insert yourself into the triangulation. Let NP respond as they will. Your non-participation keeps you out of the triangle.'},
+
+{id:'prf-acc',g:'attention',l:'Performed acceptance',
+w:'"No no it\'s okay." Slightly too polished to be genuine. Everyone knows it but nobody can name it. Also captures humor deflection -- laughing off or joking away an uncomfortable moment so it cannot land.',
+ex:'"No really, it\'s fine." Delivered with a smile that does not reach. Also: something uncomfortable is named and N makes a joke that changes the energy before anyone can respond.',
+int:'You feel the unresolved tension. That is real. You do not have to chase or resolve it.',
+sc:['Take the acceptance at face value publicly. Do not work to make it genuine.'],
+correction:'Receive the acceptance at face value. Do not try to make it genuine by pursuing the real conversation. The performed acceptance is N\'s close of the subject.',
+foldNote:'Also captures: humor deflection -- using a joke or laugh to change the energy when something uncomfortable is being named.'},
+
+{id:'ovc-apo',g:'rejection',l:'Overconsumption with performative apology',
+w:'Uses all of something in ACP\'s home and then looks at ACP and apologizes for it. The apology maintains deniability but the action already happened.',
+ex:'Uses the last of something, makes eye contact, apologizes with a small laugh.',
+int:'N said sorry so nothing can be held. But N used it all. Both things are true.',
+sc:['Accept the apology warmly. Replace the item at your own pace.'],
+correction:'Accept once warmly. Replace without comment. Do not make it a moment that N can perform more remorse around.'},
+
+{id:'feign-con',g:'attention',l:'Feigned confusion / reality editing',
+w:'When something N said or did is named N contests the premise entirely. "I didn\'t say that." Said with genuine-seeming confusion that makes the person naming the behavior feel uncertain about their own memory.',
+ex:'N says something. It is named. N responds as if N has no recollection or understanding of what is being referenced.',
+int:'You know what you heard. N\'s confusion is not evidence that you misheard. This is gaslighting-adjacent. Trust your perception.',
+sc:['"I heard what I heard." said once, warmly, and done.'],
+correction:'State what you observed once without elaboration or defense. Do not enter the debate about whether it happened. "I heard what I heard" and move on.'},
+
+{id:'conv-unavail',g:'rejection',l:'Convenient unavailability',
+w:'Suddenly becomes tired, busy, or preoccupied specifically when something is expected of N\'s that N does not want to do. Disappears from situations that would require N\'s to give, contribute, or be accountable.',
+ex:'Pear dessert is being made. N goes upstairs. Something is expected and N is no longer available for it.',
+int:'N\'s unavailability is information. It tells you what N is and is not willing to be present for.',
+sc:['Continue what you were doing. Do not pursue them. Do not adjust the plan.'],
+correction:'Continue the activity without accommodating N\'s absence. Do not adjust plans to make participation easier. Let N\'s absence be hers.'},
+
+{id:'suf-red',g:'rejection',l:'Suffering redirect',
+w:'When someone else\'s grievance or difficulty is being discussed N brings up N\'s own suffering or hardships, redirecting toward sympathy for them. Accountability cannot survive in a room focused on N\'s pain.',
+ex:'A difficulty is being discussed. N introduces something N went through that is harder, older, or more significant.',
+int:'N\'s suffering is real. Its deployment in this moment is strategic. Both things can be true.',
+sc:['Acknowledge N\'s briefly. "That sounds really hard." Then return to the original subject if it matters.'],
+correction:'Brief acknowledgment then return to the original subject. Do not follow the redirect into N\'s suffering narrative.'},
+
+{id:'sil-noncomp',g:'attention',l:'Silent non-compliance',
+w:'Agrees to something in the moment then quietly does not follow through. No confrontation, no explanation, no renegotiation. The commitment evaporates.',
+ex:'Agrees to something during the visit. After the visit it is never referenced again.',
+int:'Agreement without follow-through is not agreement. N\'s yes does not mean yes.',
+sc:['Over time stop relying on N\'s commitments without external accountability.'],
+correction:'Do not rely on verbal agreements from N\'s without external accountability structures. Note the pattern over time and adjust expectations accordingly.'},
+
+{id:'escl-conf',g:'attention',l:'Escalation when confronted',
+w:'When covert moves stop working and something is named directly N shifts to harder tools -- blame assignment and reality revision. The mask comes off. This is a different threat level from everything else in the tracker.',
+ex:'The last time something was named N assigned blame to the person who named it and then attempted to gaslight everyone involved.',
+int:'This is why direct confrontation carries high risk. The covert tools are the first layer. Underneath them is something harder. Be strategic about when, how, and in front of whom anything is named.',
+sc:['"I\'m not going to argue about what happened." said once, calmly, then disengage.','Do not try to win the gaslighting battle in the moment. Document everything after.'],
+correction:'Do not engage the blame or reality revision in the moment. State your position once and disengage. Document after. Choose confrontations very carefully knowing this is the likely response.'},
+
+// ============================================================
+// AC-SPECIFIC
+// ============================================================
+
+{id:'hm-arc',g:'narrative',l:'Relational archaeology',
+w:'Uses inside references, nicknames, or shared language with AC in front of ACP. Surfaces the pre-ACP AC.',
+ex:'A nickname from childhood, a shared reference that predates ACP, delivered to AC in front of them.',
+int:'N was there first. That is true. It does not diminish where they are now or who they chose.',
+sc:['You do not need to insert yourself. You are already the primary relationship.'],
+correction:'You do not need to compete with NP\'s history. Your relationship with them is not diminished by the existence of what came before.'},
+
+{id:'hm-car',g:'relationship',l:'Caregiving boundary erosion',
+w:'Manages AC\'s physical needs or comfort during visits as if that role is still hers.',
+ex:'"Hijo you need to eat more." Handling NP\'s plate. Commenting on NP\'s rest.',
+int:'He has a wife. N has a son. Those are different roles.',
+sc:['"I\'ve got it." (warm, firm, no explanation)'],
+correction:'Step in warmly and without explanation. "I\'ve got it" said once while doing the thing is sufficient. No confrontation required.'},
+
+{id:'hm-phy',g:'rejection',l:'Physical reclamation',
+w:'Touches AC in ways that linger or happen more frequently than the context calls for. Territorial behavior subtle enough to be deniable.',
+ex:'Fixing NP\'s collar, touching NP\'s arm multiple times, smoothing NP\'s hair.',
+int:'You felt it because it was there. You do not have to name it to anyone.',
+sc:['No response required. Log frequency. Note context.'],
+correction:'You cannot address this directly without it becoming a scene. Log frequency and note whether AC notices or responds. The pattern over time is the data.'},
+
+{id:'hm-rol',g:'relationship',l:'Role displacement',
+w:'Steps into ACP\'s role as AC\'s wife by doing things for them that would normally be hers to do.',
+ex:'The French press in ACP\'s kitchen. Cooking something specifically for them.',
+int:'N brought N\'s apparatus into your space. That is the whole sentence.',
+sc:['"I\'ve got it." (warm, calm, step in)','Or let it go and note it.'],
+correction:'Step in quietly when you choose to. "I\'ve got it" without elaboration is enough. Or let it pass and log it. Not every instance requires intervention.'},
+
+{id:'hm-acc',g:'attention',l:'Access control',
+w:'Manages who gets access to AC and when. Monopolizes NP\'s time. Delivers invitations to NP\'s own spaces as if N controls entry. Also captures remote hosting insertion -- inserting themself into the hosting of your home even when not physically present.',
+ex:'Tells ACP N can come to AC\'s workplace -- framed as checking whether N would like it. Over FaceTime telling AC\'s friend N was glad N was there and to enjoy N\'s time.',
+int:'That is NP\'s job. You are NP\'s wife. The invitation should not have come from them. The FaceTime welcome to your guest was a reach.',
+sc:['You can insert yourself into plans that involve your husband.'],
+correction:'Be the one who extends invitations, welcomes guests, and makes plans involving your home and your husband. Occupy the role. Remove the vacuum.',
+foldNote:'Also captures: remote hosting insertion -- inserting themself as welcoming authority into your home over FaceTime or through messaging even when not physically present.'},
+
+{id:'hm-fin',g:'relationship',l:'Financial disclosure as intimacy',
+w:'Shares financial details with AC in a way that creates a private channel bypassing ACP. Creates a loyalty tension.',
+ex:'Long explanation of N\'s Mexican social security and life insurance directed at AC specifically.',
+int:'This creates a loyalty tension. He holds information about N\'s that you may not.',
+sc:['Ask AC later privately. "What was that about?" (neutral, curious)'],
+correction:'Ask AC about it privately after. Not confrontationally -- genuinely. "What was that about?" keeps you informed without making it a conflict.'},
+
+{id:'hm-gra',g:'attention',l:'Gratitude as tethering',
+w:'Expresses gratitude in a way that converts AC\'s accomplishments into something that exists in service of NP\'s parents. Gratitude that routes NP\'s growth back to them.',
+ex:'"Not a lot of parents have a son who knows so much. Me and NP have improved so much because of you."',
+int:'NP\'s growth belongs to them. Gratitude that routes it back to N\'s is still a tether.',
+sc:['No response required. Let AC receive it and watch how they do.'],
+correction:'Watch how AC receives it. NP\'s response tells you about where they are in NP\'s differentiation process. No intervention required from you.'},
+
+{id:'hm-sac',g:'attention',l:'Sacrifice ledger',
+w:'Brings up sacrifices N made for AC unprompted and casually. A running emotional tab of what they owe them.',
+ex:'"I gave up so much for you boys." Woven into a casual conversation.',
+int:'The debt is never named directly so it can never be paid or addressed. That is by design.',
+sc:['Do not engage the ledger. Do not validate or challenge it.'],
+correction:'Do not engage or validate the ledger. Do not add to it by expressing sympathy that confirms the debt frame.'},
+
+{id:'hm-apr',g:'attention',l:'Approval seeking as ritual',
+w:'Seeks AC\'s opinion on small things N does not genuinely need input on. Keeps them in the position of being who N turns to.',
+ex:'"Hijo what do you think I should order?" for something N has eaten a hundred times.',
+int:'The ask is not about the decision. It is about maintaining the dynamic.',
+sc:['You can offer your own input if you want. Or let it be between them.'],
+correction:'You can offer your opinion first, warmly, which inserts yourself into the dynamic without confrontation. Or let it pass.'},
+
+{id:'hm-dsg',g:'attention',l:'Distance guilt',
+w:'Frames missing AC in a way that makes them feel responsible for N\'s emotional pain around the distance.',
+ex:'"It\'s just so hard when you\'re not around. I don\'t know how I manage."',
+int:'He grew up. He did not abandon them. The framing does not make that distinction.',
+sc:['Do not validate the guilt frame. Do not challenge it publicly.'],
+correction:'Do not validate the guilt frame in conversation with AC. Helping them see the distinction between love for NP\'s parents and responsibility for their emotional regulation is slow, private work.'},
+
+{id:'hm-prx',g:'attention',l:'Proxy communication',
+w:'Says things to AC or NP that are clearly meant for ACP to hear. Delivers the message and maintains full deniability.',
+ex:'"Hijo make sure you\'re taking care of yourself." Said while ACP is in earshot in N\'s own well-run home.',
+int:'You are the actual audience. You do not have to respond as if the message was not for you.',
+sc:['You can respond directly to what was said as if it was addressed to the room.','Or let it go and log it.'],
+correction:'You can respond to the content of the message directly and warmly as if it had been addressed to you -- which removes the deniability without confrontation.'},
+
+{id:'hm-dep',g:'attention',l:'Departure extraction',
+w:'Goodbyes become extended emotional productions requiring AC to comfort and reassure N\'s before N can leave.',
+ex:'A goodbye that takes 30 minutes, tearful, with one more thing N needed to say.',
+int:'The visit ends the same way it ran throughout.',
+sc:['Say your goodbye warmly and early. Let the extraction happen without your participation.'],
+correction:'Say your goodbye once, warmly, and step away. Let AC manage the extraction. Your absence from the production is a boundary without a confrontation.'},
+
+{id:'hm-prp',g:'relationship',l:'AC as prop',
+w:'Displays AC more prominently when new people are present. NP\'s presence becomes part of N\'s presentation. Also captures bond signaling -- shared looks, inside references, physical closeness with AC in front of new people to signal their bond as primary.',
+ex:'Stands closer to them, references them more, touches them more when strangers are watching. Uses a shared reference only they have in front of a new person.',
+int:'He is being used as a credential. A performance in front of new people does not change the truth of NP\'s life.',
+sc:['No response required. Observe.'],
+correction:'Be present with AC in your own register -- one that does not require an audience. Your relationship is visible in a different way than hers.',
+foldNote:'Also captures: bond signaling to new people -- using shared looks, references, and physical closeness with AC specifically in front of new people to establish their bond as primary.'},
+
+{id:'hm-chi',g:'relationship',l:'Childhood centralization',
+w:'Retells AC\'s childhood stories directly to them in front of ACP, positioning themself as the protagonist of NP\'s origin story.',
+ex:'Tells a story about AC\'s childhood directly to AC while ACP is in the room.',
+int:'NP\'s origin story is real. NP\'s current story is yours. Both can be true.',
+sc:['Listen warmly. You do not have to compete with NP\'s history.'],
+correction:'You cannot compete with NP\'s origin story and you do not need to. Your story with them is current and primary.'},
+
+{id:'hm-svl',g:'attention',l:'Strategic vulnerability',
+w:'Physical or emotional distress flares at notable moments -- particularly when attention is directed elsewhere or away from them.',
+ex:'ACP and AC are having a good moment. Suddenly N is not feeling well or becomes emotional.',
+int:'The timing is the data, not the symptom.',
+sc:['Let others respond. Keep your energy steady.'],
+correction:'Continue what you were doing. Let others respond if they choose. Your steady non-reaction removes the reliability of the interruption.'},
+
+{id:'disp-gift',g:'relationship',l:'Disproportionate gifting as debt creation',
+w:'Gives AC gifts or does things for them that are disproportionate to the occasion. The grandness creates a sense of debt or obligation that exceeds what a normal gift would produce.',
+ex:'The birthday book with the emotional monologue. The gift is real but the production makes it about N\'s need for NP\'s gratitude rather than about NP\'s birthday.',
+int:'The size of the gesture is calibrated to the size of the response N needs. A normal gift does not require a monologue.',
+sc:['No response required from you. Let AC receive it and watch how they navigate the weight of it.'],
+correction:'Watch how AC receives it. Over time helping them name the pattern -- that the size of the gift corresponds to the size of the response expected -- is useful private work.'},
+
+{id:'home-trans',g:'relationship',l:'Home as transitional framing',
+w:'Makes comments that position your home or your marriage as temporary or secondary -- as if AC\'s real life or real home is still with NP\'s parents.',
+ex:'"Your house is good too, compared to houses in Mexico it\'s..." The compliment exists only in relation to a lower comparison point.',
+int:'Your home is NP\'s home. It is not a transitional arrangement. N\'s framing does not make it true.',
+sc:['"We love it here." said warmly and closed.'],
+correction:'"We love it here" said warmly without engaging the comparison. Do not defend your home against the benchmark N set.'},
+
+{id:'cpl-insert',g:'relationship',l:'Couple decision insertion',
+w:'Inserts themself into decisions that belong to you and AC as a couple -- finances, living situation, career moves, future plans -- offering opinions that were not requested.',
+ex:'Offers a view on where you should live, how you should handle money, what AC\'s career should look like.',
+int:'These decisions belong to your marriage. N\'s opinion on them was not requested and is not required.',
+sc:['"We\'re figuring it out together." said warmly and closed.'],
+correction:'"We\'re figuring it out together" closes the insertion without confrontation. Do not engage the substance of N\'s opinion.'},
+
+{id:'terr-prox',g:'attention',l:'Territorial proximity mapping',
+w:'Continuously tracks ACP\'s position relative to AC and adjusts N\'s own accordingly. When ACP is close N monitors. When ACP steps away N moves into the space. N is managing the marriage as a dynamic N needs to stay informed about.',
+ex:'When ACP is next to AC N glances at them and tries to hear what they are saying. When ACP moves away N positions themself as close to AC as possible.',
+int:'You are being watched more carefully than you may realize. This is not paranoia -- it is pattern recognition.',
+sc:['Stay close to AC when you want to be. Do not adjust your position to manage N\'s comfort.'],
+correction:'Stay close to AC. Do not step away to create space for them. Your position next to your husband is not something you need to manage around them.'},
+
+{id:'contact-press',g:'attention',l:'Contact frequency pressure',
+w:'Expresses complaint or guilt about how often AC initiates contact. Reframes already frequent contact as insufficient. The complaint is about control over attention, not about genuine distance.',
+ex:'They talk almost every workday. N complains AC does not call N\'s directly enough.',
+int:'The calls happen when you are not home. The complaint exists despite daily contact. This is not about missing them.',
+sc:['This is between AC and NP\'s parents to navigate. Stay out of the logistics.'],
+correction:'Do not offer opinions on their call frequency -- it will be weaponized. Let AC set NP\'s own terms. Your role is to support NP\'s differentiation, not manage the schedule.'},
+
+// ============================================================
+// NP-SPECIFIC
+// ============================================================
+
+{id:'they-sen',g:'relationship',l:'Sentence completion',
+w:'Finishes NP\'s sentences or arrives at NP\'s point before they do. After decades N has NP\'s patterns mapped.',
+ex:'NP begins a thought. N completes it before they get there, often incorrectly.',
+int:'N owns NP\'s thoughts before they finish having them. Watch NP\'s face when it happens.',
+sc:['No response required. Observe.'],
+correction:'You can direct a follow-up to NP directly. "What were you going to say, NP?" gently reopens what N closed.'},
+
+{id:'they-def',g:'relationship',l:'Deference check',
+w:'NP automatically looks to N before responding or deciding, even on small things. Externalized decision-making after decades of conditioning.',
+ex:'Someone asks NP a direct question. He glances at N before answering.',
+int:'This is the outcome of the control system, not weakness.',
+sc:['Direct questions to NP directly and wait for NP\'s answer.'],
+correction:'Ask NP directly and wait. Do not fill the silence or redirect to them. Give them the space to answer without them.'},
+
+{id:'they-NP\'s',g:'narrative',l:'Shared history revisionism',
+w:'Narrates their shared history in a way that centers themself as the one who held everything together.',
+ex:'"I carried this family. I don\'t know where we would be without everything I did."',
+int:'N was the breadwinner. That is true. The way a true thing is deployed strategically is still control.',
+sc:['No response required.'],
+correction:'No direct correction available. Asking NP privately how they see NP\'s own story over time is a quiet act of restoration.'},
+
+{id:'they-fin',g:'relationship',l:'Financial authority display',
+w:'References money or financial decisions in ways that subtly remind NP of who holds the resources.',
+ex:'Discusses N\'s SSA benefits and finances in front of others in a way that positions N\'s as the economic center.',
+int:'NP\'s legal status and financial dependency are real structural facts in this relationship.',
+sc:['Observe. Note NP\'s response when it happens.'],
+correction:'No direct correction available. Treating NP as a full person in interactions independent of financial framing is the quiet counter.'},
+
+{id:'they-ppg',g:'rejection',l:'Public/private warmth gap',
+w:'Treats NP warmly in front of others but shifts noticeably in tone in lower-stakes moments.',
+ex:'Warm and affectionate when others are watching. Cooler, more directive in private.',
+int:'The public warmth is image management. The baseline is what happens when the audience reduces.',
+sc:['Observe the gap. That is the data.'],
+correction:'Be warm with NP consistently, regardless of audience. Your consistency with them is a quiet contrast to N\'s gap.'},
+
+{id:'they-ctl',g:'attention',l:'Full control repertoire',
+w:'Has every response available when NP pushes back: correction most common, then silence, performed hurt, or escalation. Deployed depending on audience and stakes.',
+ex:'NP contradicts something. N corrects them smoothly in front of others.',
+int:'He has learned not to push back because every option produces a cost. That is a trained response.',
+sc:['Observe which response N uses and what triggered it.'],
+correction:'No direct correction available. The repertoire belongs to their dynamic. Treating NP\'s attempts at self-expression as valid when you are present is the quiet counter.'},
+
+{id:'they-jok',g:'relationship',l:'Jokes at NP\'s expense',
+w:'Makes jokes at NP\'s expense framed as affectionate teasing. He laughs along because that is the script.',
+ex:'"NP always does this -- they can\'t help it." (laughs) NP laughs too.',
+int:'He cannot respond without seeming like they cannot take a joke. The affection framing is the trap door.',
+sc:['Do not co-sign the joke. Neutral.'],
+correction:'Do not laugh along. A neutral expression signals that the joke did not land the way N expected without confrontation.'},
+
+{id:'they-emi',g:'relationship',l:'Emotional interpretation',
+w:'Declares how NP feels or explains NP\'s reactions before they can speak for themself.',
+ex:'"He\'s just tired." "He doesn\'t really like that, they just won\'t say so."',
+int:'N owns NP\'s inner world. He does not even get to explain themself.',
+sc:['Ask NP directly what they think or feels. Watch what happens.'],
+correction:'"NP, what do you think?" directed at them specifically after N has interpreted them is a quiet restoration. Wait for NP\'s answer.'},
+
+{id:'they-spk',g:'relationship',l:'Speaking for NP',
+w:'Answers questions directed at NP before they can respond.',
+ex:'Someone asks NP something directly. N answers first.',
+int:'He is being mediated. N controls the flow of information from them to the room.',
+sc:['"What do you think, NP?" directed back to them specifically.'],
+correction:'"What do you think, NP?" after N has answered for them reopens the question without confronting them.'},
+
+{id:'they-cor',g:'relationship',l:'Publicly correcting NP',
+w:'Corrects NP\'s stories, facts, or word choices in front of others.',
+ex:'NP is telling a story. N interrupts: "No, it wasn\'t like that. It was..."',
+int:'He gets smaller every time this happens in public.',
+sc:['No response required. Observe and note frequency.'],
+correction:'Let NP finish NP\'s story without correction from you. "I\'d love to hear the rest of that, NP" after N\'s interruption gently restores the floor.'},
+
+{id:'they-dec',g:'relationship',l:'Deciding for NP',
+w:'States NP\'s preferences or needs as fact without consulting them.',
+ex:'"He doesn\'t want that." "He\'ll have the same as me."',
+int:'He has been decided for so long that sometimes they do not notice.',
+sc:['"NP, what do you feel like?" directed at them directly.'],
+correction:'"NP, what do you want?" asked directly and waited on creates a moment where NP\'s preference exists independently of N\'s declaration.'},
+
+{id:'they-val',g:'relationship',l:'NP as validator',
+w:'Directs stories or opinions specifically at NP, waiting for NP\'s visible agreement before moving on. He is N\'s in-room approval source after AC developed some distance from this role.',
+ex:'N tells a story, looking at NP, pausing when N needs a nod or laugh.',
+int:'AC has developed some distance from this role. N shifted the dependency to NP.',
+sc:['Observe how NP responds. Watch the cost of withholding validation.'],
+correction:'You cannot disrupt this dynamic directly. Being warm and attentive with NP independent of NP\'s validator role is what you can offer.'},
+
+{id:'they-nar',g:'relationship',l:'Narrating NP as subject',
+w:'Talks about NP to others while they are present, making them a character in N\'s story rather than a person in the room.',
+ex:'"NP is like this -- they always does that -- you know how they are." Said while NP is sitting right there.',
+int:'He gets objectified in conversation while present to speak for themself.',
+sc:['"NP, is that how you see it?" directed at them directly.'],
+correction:'"NP, is that how you see it?" restores them as a participant rather than a subject. Wait for NP\'s answer.'},
+
+{id:'they-con',g:'relationship',l:'Constrained self in N\'s presence',
+w:'NP is noticeably more relaxed, more themself, more animated when N is not in the room or not focused on them. The real NP is intact -- they just does not get much room to be them around them.',
+ex:'The espresso love. The Jinx enthusiasm. The watch talk. All fuller when N\'s attention is elsewhere.',
+int:'The real NP is intact. He just does not get much room to occupy themself around them.',
+sc:['Give NP room when N is not watching.'],
+correction:'Engage NP\'s actual interests when space opens. Ask about watches. Respond to NP\'s humor. You are probably one of few people who addresses them as a full person.',
+foldNote:'Also captures: pre-defeat -- NP visibly shrinks before finishing a contribution, already knowing before they start how it will land.'},
+
+{id:'opn-dis',g:'relationship',l:'Opinion dismissal',
+w:'When NP manages to express a view NP\'s input is minimized or redirected with a small sound, a correction, or a pivot that signals NP\'s contribution does not carry the same weight.',
+ex:'NP offers a view. N makes a small sound, offers a mild correction, or pivots without engaging what they said.',
+int:'Watch NP\'s face when this happens. He usually does not react visibly anymore. That lack of reaction is decades of the same thing.',
+sc:['"NP what do you think?" after NP\'s input is dismissed returns the floor.'],
+correction:'Turn toward NP after the dismissal. "I\'d love to hear more about that, NP" or asking a follow-up question on NP\'s point signals NP\'s input counted.'},
+
+{id:'soc-iso',g:'relationship',l:'Social isolation',
+w:'NP has no independent friendships or social life outside of N. The absence of outside relationships is the structural outcome of decades of managed isolation. N is NP\'s entire relational world by design.',
+ex:'NP is home all the time. No friends of NP\'s own. NP\'s social interactions happen through N\'s or in contexts N controls.',
+int:'This is not who NP is. This is what was done to them over time. The man who gets excited about espresso and watches is intact.',
+sc:['Give NP room when N is not watching. Direct questions to them. Engage NP\'s interests.'],
+correction:'Engage NP as a full person with interests and opinions every time the space opens. You are likely one of very few people who does this. It matters more than it looks like.'},
+
+{id:'nar-abs',g:'narrative',l:'Narrative absorption',
+w:'N is present in every story of NP\'s life. There is no account of who they are, where they came from, or what they have done that does not route through them. NP\'s identity has been narrated by N\'s for so long they may not have a version of themself that exists outside of N\'s telling.',
+ex:'Any story NP begins about NP\'s own past -- N is already in it before they finish.',
+int:'The real NP exists. You have seen them. He is the person who appears when N is not watching.',
+sc:['When NP tells NP\'s own stories let them finish them. Ask follow-up questions. Treat NP\'s account as authoritative.'],
+correction:'Let NP finish NP\'s own stories. Ask follow-up questions. Treat NP\'s account as the authoritative one. That is a small but real act of restoration.',
+foldNote:'Also captures: narrative absorption includes the total absence of any story of NP\'s life that does not include N\'s as central figure.'},
+
+// ============================================================
+// WITH NEW PEOPLE
+// ============================================================
+
+{id:'np-chr',g:'attention',l:'Elevated charm performance',
+w:'New people get the best version of the performance. With ACP N has stopped performing because the baseline relationship is established. Also captures performed inclusion for audience -- N\'s warmth toward ACP visibly increases when new people are watching.',
+ex:'Notably warmer, funnier, more engaged with a stranger than N\'s baseline with ACP. Also: more inclusive and affectionate toward ACP specifically when guests are present.',
+int:'The contrast between what new people see and what you see is information about the real pattern. The performed warmth toward you when watched is for them, not for you.',
+sc:['You do not have to match the elevated performance. Stay your baseline warm self.'],
+correction:'Stay your baseline warm self. Do not perform in return. Your consistency is more credible than N\'s elevated performance.',
+foldNote:'Also captures: performed inclusion for audience -- N\'s warmth toward ACP increases specifically when new people are watching.'},
+
+{id:'np-cal',g:'attention',l:'Performance calibration',
+w:'Visibly amplifies what is landing with a new person. Tracks approval and turns toward whatever produced it.',
+ex:'A new person laughs at something. N immediately does more of whatever caused it.',
+int:'This is narcissistic supply acquisition. You can watch the mechanism in real time.',
+sc:['Observe without engaging.'],
+correction:'No direct correction available. Being a stable, non-reactive presence who does not amplify for approval is a visible contrast.'},
+
+{id:'np-par',g:'rejection',l:'Parallel provisioning',
+w:'Declines what ACP offers, then acquires the same thing independently. Avoids being in a position of gratitude toward ACP.',
+ex:'Declines the fruit. Buys a lot of the same fruit.',
+int:'N did not want the thing. N wanted to not receive it from you. Those are different.',
+sc:['Offer once, warmly. Let it go after.'],
+correction:'Offer once and release. N\'s parallel acquisition is N\'s move. Do not offer again -- that turns N\'s refusal into an ongoing dynamic.'},
+
+{id:'np-und',g:'rejection',l:'Subtle undermining via humor',
+w:'Makes subtly undermining comments about ACP to new people framed as jokes. New people have no context to push back.',
+ex:'A light comment about ACP that gets a small laugh but leaves a quiet impression.',
+int:'Log the specific wording when possible. The subtlety is the point and the words are the data.',
+sc:['"Ha." (acknowledge without co-signing)','Or redirect the conversation naturally.'],
+correction:'"Ha." without co-signing, then redirect. Do not defend yourself -- that confirms something needed defending. Log the exact words.'},
+
+{id:'disc-warm',g:'rejection',l:'Discomfort when ACP receives warmth',
+w:'Becomes visibly uncomfortable or shifts behavior when new people respond warmly to ACP specifically. Not a general response to losing the room -- this is targeted at ACP receiving genuine positive engagement.',
+ex:'A new person responds warmly to ACP. N\'s body language shifts, N recalibrates, finds a way to redirect or insert themself.',
+int:'N is not threatened by general warmth in the room. N is threatened by warmth directed at you specifically.',
+sc:['Receive the warmth fully. Do not shrink from it to manage N\'s comfort.'],
+correction:'Receive the warmth fully and stay in the moment. Do not shrink or redirect to include them. You are allowed to be liked.'}
+
+];
+
+</script>
+<script>
+var SEC_OPEN={};
+GROUPS.forEach(function(g){SEC_OPEN[g.id]=false;}); // all collapsed by default
+var DEF_SEC_OPEN={};
+GROUPS.forEach(function(g){DEF_SEC_OPEN[g.id]=false;}); // Learn tab groups collapsed by default
+var _qlSel=null;
+var _blSel=[];
+var _cultFilter='all';
+var _defDetail=false;
+
+var state={sel:[],q:'',df:'',dt:'',editing:null,moments:[],custom:[],catNotes:{},addedCats:[],hiddenCore:[]};
+
+function save(){
+  try{
+    localStorage.setItem('pj1',JSON.stringify(state.moments));
+    localStorage.setItem('pj1c',JSON.stringify(state.custom));
+    localStorage.setItem('pj1n',JSON.stringify(state.catNotes));
+    localStorage.setItem('pj1a',JSON.stringify(state.addedCats));
+    localStorage.setItem('pj1h',JSON.stringify(state.hiddenCore));
+    sessionStorage.setItem('pj1',JSON.stringify(state.moments));
+  }catch(e){}
+}
+function load(){
+  try{var e=localStorage.getItem('pj1')||sessionStorage.getItem('pj1');if(e)state.moments=JSON.parse(e);}catch(e){}
+  try{var c=localStorage.getItem('pj1c');if(c)state.custom=JSON.parse(c);}catch(e){}
+  try{var n=localStorage.getItem('pj1n');if(n)state.catNotes=JSON.parse(n);}catch(e){}
+  try{var a=localStorage.getItem('pj1a');if(a)state.addedCats=JSON.parse(a);}catch(e){}
+  try{var h=localStorage.getItem('pj1h');if(h)state.hiddenCore=JSON.parse(h);}catch(e){}
+}
+function allCats(){return CATS.concat(state.custom);}
+
+function gc(n){return GC[n]||GC[1];}
+function gcd(n){return GCD[n]||GCD[1];}
+function gcm(n){return GCM[n]||GCM[1];}
+function gColor(gid){var g=GROUPS.find(function(x){return x.id===gid;});return g?g.c:1;}
+
+// Navigation
+function sw(p){
+  document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('on');});
+  document.querySelectorAll('.nbt').forEach(function(x){x.classList.remove('on');});
+  var pg=document.getElementById('pg-'+p);var nb=document.getElementById('nb-'+p);
+  if(pg)pg.classList.add('on');if(nb)nb.classList.add('on');
+  if(p==='st')renderStats();
+  if(p==='def'){_defDetail=document.getElementById('def-detail-toggle').checked;renderDefs('');}
+  if(p==='hist')renderHistory();
+  if(p==='gl')renderGlossary();
+  window.scrollTo(0,0);
+}
+
+// Key overlay
+function openKey(){document.getElementById('key-overlay').classList.add('on');}
+function closeKey(){document.getElementById('key-overlay').classList.remove('on');}
+function keyOvClick(e){if(e.target===document.getElementById('key-overlay'))closeKey();}
+
+// Cultural checkbox show/hide note
+document.addEventListener('DOMContentLoaded',function(){
+  var cc=document.getElementById('cult-check');
+  if(cc)cc.addEventListener('change',function(){
+    var n=document.getElementById('cult-note');
+    if(n)n.style.display=this.checked?'block':'none';
+  });
+});
+
+// Categories toggle
+function toggleCats(){
+  var sec=document.getElementById('cats-section');
+  var btn=document.getElementById('show-cats-btn');
+  var open=sec.classList.contains('open');
+  sec.classList.toggle('open',!open);
+  btn.classList.toggle('open',!open);
+  btn.textContent=open?'Show categories':'Hide categories';
+  if(!open){
+    // Reset all groups to collapsed every time panel opens
+    GROUPS.forEach(function(g){SEC_OPEN[g.id]=false;});
+    rCats();
+  }
+}
+
+// Recently used
+function getRecentCatIds(){
+  var seen={};var out=[];
+  state.moments.forEach(function(e){if(!e.isSummary&&e.cid&&!seen[e.cid]){seen[e.cid]=true;out.push(e.cid);}});
+  return out.slice(0,5);
+}
+function renderRecentUsed(){
+  var wrap=document.getElementById('recent-used-wrap');if(!wrap)return;
+  var ids=getRecentCatIds();if(!ids.length){wrap.innerHTML='';return;}
+  var h='<div class="recent-used"><div class="recent-label">Recently used</div><div class="recent-chips">';
+  ids.forEach(function(cid){
+    var cat=allCats().find(function(c){return c.id===cid;});if(!cat)return;
+    h+='<button class="recent-chip" onclick="quickSelCat(\''+cid+'\')">'+cat.l+'</button>';
+  });
+  h+='</div></div>';
+  wrap.innerHTML=h;
+}
+function quickSelCat(cid){
+  if(state.sel.indexOf(cid)===-1)state.sel.push(cid);
+  var sec=document.getElementById('cats-section');
+  if(!sec.classList.contains('open'))toggleCats();
+  rCats();uForm();
+}
+
+// Pinned cats
+
+
+// Render categories
+function rCats(){
+  var el=document.getElementById('cats');if(!el)return;
+  var h='';
+  GROUPS.forEach(function(g){
+    var col=g.c;
+    var allGroupCats=allCats().filter(function(c){return c.g===g.id;});
+    // Only show core (non-hidden) + added cats
+    var visible=allGroupCats.filter(function(c){return isVisibleInLog(c);});
+    visible.sort(function(a,b){return a.l.localeCompare(b.l);});
+    if(!visible.length)return;
+    var op=SEC_OPEN[g.id]===true;
+    h+='<div class="cs">';
+    h+='<div class="csh" onclick="togSec(this)" data-gid="'+g.id+'">';
+    h+='<div class="csd" style="background:'+gc(col)+'"></div>';
+    h+='<span class="csn" style="color:'+gc(col)+'">'+g.name+'</span>';
+    h+='<span class="cst'+(op?' op':'')+'">›</span></div>';
+    h+='<div class="cg" style="max-height:'+(op?'3000px':'0px')+'">';
+    visible.forEach(function(cat){
+      var sel=state.sel.indexOf(cat.id)!==-1;
+      var bg=sel?gcd(col):'var(--surface)';var bc=sel?gcm(col):'transparent';
+      var core=isCore(cat.id);
+      h+='<div class="ci'+(sel?' sel':'')+'" onclick="selCat(this)" data-cid="'+cat.id+'" style="background:'+bg+';border-color:'+bc+';cursor:pointer">';
+      h+='<div class="csd" style="background:'+gc(col)+'"></div>';
+      h+='<span class="cin">'+cat.l+'</span>';
+      h+='<button class="cii" onclick="infoModal(event,this)" data-cid="'+cat.id+'">?</button>';
+      h+='<button class="ci-pin ci-remove" onclick="removeCatFromLog(event,\''+cat.id+'\','+core+')" title="Remove">−</button>';
+      h+='</div>';
+    });
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
+}
+function togSec(el){
+  var gid=el.getAttribute('data-gid');
+  SEC_OPEN[gid]=SEC_OPEN[gid]===true?false:true;
+  rCats();
+}
+function selCat(el){
+  var id=el.getAttribute('data-cid');
+  var idx=state.sel.indexOf(id);
+  if(idx===-1)state.sel.push(id);else state.sel.splice(idx,1);
+  rCats();uForm();
+}
+function removeCatFromLog(e,cid,isCoreBehavior){
+  e.stopPropagation();
+  if(isCoreBehavior){
+    // Hide core behavior (restorable from Learn tab)
+    if(state.hiddenCore.indexOf(cid)===-1)state.hiddenCore.push(cid);
+  }else{
+    // Remove added behavior entirely from Log tab
+    state.addedCats=state.addedCats.filter(function(x){return x!==cid;});
+  }
+  // Deselect if currently selected
+  var idx=state.sel.indexOf(cid);if(idx!==-1)state.sel.splice(idx,1);
+  save();rCats();uForm();toast('Removed. Find it in Learn to add back.');
+}
+function addCatToLog(e,cid){
+  e.stopPropagation();
+  // Remove from hidden if it was a hidden core
+  state.hiddenCore=state.hiddenCore.filter(function(x){return x!==cid;});
+  // Add to addedCats if not core
+  if(!isCore(cid)&&state.addedCats.indexOf(cid)===-1)state.addedCats.push(cid);
+  save();rCats();renderDefs(document.getElementById('def-search')?document.getElementById('def-search').value:'');
+  toast('Added to Log tab.');
+}
+
+// Form state
+function uForm(){
+  var s=document.getElementById('lfs');var b=document.getElementById('lb');var chips=document.getElementById('multi-chips');
+  if(!s||!b)return;
+  if(state.sel.length>0){
+    var firstCat=allCats().find(function(c){return c.id===state.sel[0];});
+    var col=firstCat?gColor(firstCat.g):1;
+    s.textContent=state.sel.length===1?firstCat.l:state.sel.length+' categories selected';
+    s.style.color=gc(col);
+    b.className='log-save-btn active';b.removeAttribute('disabled');
+    if(chips){
+      var ch='';
+      state.sel.forEach(function(cid){
+        var cat=allCats().find(function(c){return c.id===cid;});if(!cat)return;
+        var c=gColor(cat.g);
+        ch+='<span class="mchip" style="background:'+gcd(c)+';color:'+gc(c)+';border:1px solid '+gcm(c)+'">'+cat.l+'<button class="mchip-x" onclick="removeSel(this)" data-cid="'+cid+'">✕</button></span>';
+      });
+      chips.innerHTML=ch;
+    }
+  }else{
+    s.textContent="Tap what feels closest (you can\u2019t get it wrong)";s.style.color='var(--dim)';
+    b.className='log-save-btn';b.setAttribute('disabled','');
+    if(chips)chips.innerHTML='';
+  }
+}
+function removeSel(el){
+  var id=el.getAttribute('data-cid');
+  var idx=state.sel.indexOf(id);if(idx!==-1)state.sel.splice(idx,1);
+  rCats();uForm();
+}
+
+// Log it
+function logIt(){
+  if(state.sel.length===0)return;
+  var note=document.getElementById('ln').value.trim();
+  var cultural=document.getElementById('cult-check').checked;
+  var ts=new Date().toISOString();
+  state.sel.forEach(function(cid){
+    var cat=allCats().find(function(c){return c.id===cid;});if(!cat)return;
+    var g=GROUPS.find(function(x){return x.id===cat.g;});
+    state.moments.unshift({id:Date.now()+Math.random(),cid:cat.id,cl:cat.l,grp:cat.g,gn:g?g.name:cat.g,note:note,ts:ts,cultural:cultural||false});
+  });
+  document.getElementById('ln').value='';
+  document.getElementById('cult-check').checked=false;
+  document.getElementById('cult-note').style.display='none';
+  state.sel=[];
+  // Close cats section
+  var sec=document.getElementById('cats-section');
+  var btn=document.getElementById('show-cats-btn');
+  sec.classList.remove('open');btn.classList.remove('open');btn.textContent='Show categories';
+  save();rAll();renderRecentUsed();
+  var msgs=['Got it. Take a breath.','Saved. You noticed.','Logged. You\u2019re allowed to trust what you noticed.','Saved. Take your time.'];
+  toast(msgs[Math.floor(Math.random()*msgs.length)]);
+  setTimeout(function(){var feed=document.getElementById('feed');if(feed)feed.scrollIntoView({behavior:'smooth',block:'start'});},150);
+}
+
+// Feed render (log tab - recent)
+function rFeed(){
+  var recent=state.moments.filter(function(e){return !e.isSummary;}).slice(0,20);
+  var tc=document.getElementById('tc');
+  if(tc)tc.textContent=state.moments.filter(function(e){return !e.isSummary;}).length;
+  var feed=document.getElementById('feed');if(!feed)return;
+  if(!recent.length){feed.innerHTML='<div class="emp">Nothing logged yet.</div>';return;}
+  feed.innerHTML=buildFeedHTML(recent,true);
+}
+
+function buildFeedHTML(moments,showEdit){
+  var h='';
+  moments.forEach(function(e){
+    var col=gColor(e.grp);
+    var dt=new Date(e.ts);
+    var tm=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    var isEd=state.editing===e.id;
+    h+='<div class="en"><div class="est" style="background:'+gc(col)+'"></div><div class="eb"><div class="et">';
+    h+='<span class="eg" style="background:'+gcd(col)+';color:'+gc(col)+';border:1px solid '+gcm(col)+'">'+e.cl+'</span>';
+    h+='<span class="egr">'+e.gn+'</span><span class="etm">'+tm+'</span></div>';
+    if(e.cultural)h+='<div class="ecult">🌿 culturally influenced</div>';
+    if(!isEd&&e.note)h+='<div class="eno">'+e.note+'</div>';
+    if(isEd)h+='<textarea class="een" id="ee-'+e.id+'" rows="3">'+e.note+'</textarea><button class="ees" onclick="saveEdit(this)" data-id="'+e.id+'">Save</button>';
+    if(e.isSummary)h+='<div class="eno" style="font-family:\'DM Mono\',monospace;font-size:10px;white-space:pre-wrap">'+e.note+'</div>';
+    if(showEdit)h+='</div><div class="ea"><button class="ebt" onclick="startEdit(this)" data-id="'+e.id+'">edit</button><button class="ebt del" onclick="delEntry(this)" data-id="'+e.id+'">✕</button></div>';
+    else h+='</div><div class="ea"><button class="ebt del" onclick="delEntry(this)" data-id="'+e.id+'">✕</button></div>';
+    h+='</div>';
+  });
+  return h;
+}
+
+function rAll(){rCats();rFeed();uForm();}
+
+function delEntry(el){
+  var id=parseFloat(el.getAttribute('data-id'));
+  state.moments=state.moments.filter(function(e){return e.id!==id;});
+  save();rAll();renderHistory();toast('Removed.');
+}
+function startEdit(el){var id=parseFloat(el.getAttribute('data-id'));state.editing=id;rFeed();}
+function saveEdit(el){
+  var id=parseFloat(el.getAttribute('data-id'));
+  var ta=document.getElementById('ee-'+id);if(!ta)return;
+  state.moments=state.moments.map(function(e){return e.id===id?Object.assign({},e,{note:ta.value.trim()}):e;});
+  state.editing=null;save();rFeed();toast('Updated.');
+}
+
+// History
+var _cultFilter='all';
+function setCultFilter(f){
+  _cultFilter=f;
+  document.getElementById('cf-all').classList.toggle('on',f==='all');
+  document.getElementById('cf-cult').classList.toggle('on',f==='cult');
+  renderHistory();
+}
+function renderHistory(){
+  var q=(document.getElementById('hist-q')||{}).value||'';
+  var df=(document.getElementById('hist-df')||{}).value||'';
+  var dt=(document.getElementById('hist-dt')||{}).value||'';
+  var moments=state.moments.filter(function(e){
+    if(e.isSummary)return true;
+    if(_cultFilter==='cult'&&!e.cultural)return false;
+    if(q){var ql=q.toLowerCase();if(!e.cl.toLowerCase().includes(ql)&&!(e.note||'').toLowerCase().includes(ql)&&!e.gn.toLowerCase().includes(ql))return false;}
+    if(df&&new Date(e.ts)<new Date(df))return false;
+    if(dt){var t=new Date(dt);t.setHours(23,59,59);if(new Date(e.ts)>t)return false;}
+    return true;
+  });
+  var fl=document.getElementById('hist-fl');
+  if(fl)fl.textContent=moments.filter(function(e){return !e.isSummary;}).length+' moments';
+  var feed=document.getElementById('hist-feed');if(!feed)return;
+  if(!moments.length){feed.innerHTML='<div class="emp">Nothing here yet.</div>';return;}
+  feed.innerHTML=buildFeedHTML(moments,true);
+}
+function clearHQ(){var i=document.getElementById('hist-q');if(i)i.value='';renderHistory();}
+function clearHistDates(){
+  var df=document.getElementById('hist-df');var dt=document.getElementById('hist-dt');
+  if(df)df.value='';if(dt)dt.value='';renderHistory();
+}
+
+// Info modal (from ? button in cat list)
+function infoModal(e,el){
+  e.stopPropagation();
+  var catId=el.getAttribute('data-cid');
+  var cat=allCats().find(function(c){return c.id===catId;});if(!cat)return;
+  var col=gColor(cat.g);var g=GROUPS.find(function(x){return x.id===cat.g;});
+  var savedNote=state.catNotes[catId]||'';
+  var h='<div class="mt" style="color:'+gc(col)+'">'+cat.l+'</div>';
+  h+='<div class="mg">'+(g?g.name:'')+'</div>';
+  h+='<div class="msl">What this behavior is</div><div class="mtx">'+(cat.w||'')+'</div>';
+  if(cat.ex){h+='<div class="msl">Example</div><div class="mex">'+cat.ex+'</div>';}
+  if(cat.foldNote){h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:6px 10px;background:var(--card);border-radius:4px">'+cat.foldNote+'</div>';}
+  h+='<div class="msl">Internal reminder</div><div class="mtx">'+(cat.int||'')+'</div>';
+  if(cat.sc&&cat.sc.length){h+='<div class="msl">How to respond</div>';cat.sc.forEach(function(s){h+='<div class="msc">'+s+'</div>';});}
+  h+='<div class="msl">Your notes</div><div class="cat-note-area">';
+  h+='<textarea class="cat-note-ta" id="cat-note-ta" placeholder="Add your own notes about this pattern...">'+savedNote+'</textarea>';
+  h+='<button class="cat-note-btn" onclick="saveCatNote(this)" data-cid="'+catId+'">Save note</button></div>';
+  h+='<button class="mo-close" onclick="closeM()">Close</button>';
+  document.getElementById('mc').innerHTML=h;
+  document.getElementById('mo').classList.add('op');
+}
+function saveCatNote(el){
+  var catId=el.getAttribute('data-cid');
+  var ta=document.getElementById('cat-note-ta');if(!ta)return;
+  state.catNotes[catId]=ta.value.trim();save();toast('Note saved.');
+}
+function cmO(e){if(e.target===document.getElementById('mo'))closeM();}
+function closeM(){document.getElementById('mo').classList.remove('op');}
+
+// IDENTIFY TAB
+// LEARN TAB (Definitions)
+function renderDefs(q){
+  _defDetail=document.getElementById('def-detail-toggle').checked;
+  var ql=(q||'').toLowerCase();var h='';
+
+  h+='<div class="def-disc"><div class="def-disc-title">About these definitions</div>These are for pattern recognition and personal clarity — not diagnosis. What you can change is your own response, your boundaries, and the degree to which the behavior has access to you. That is not a consolation. That is where the power is.</div>';
+
+  // Understanding section
+  h+='<div class="dc2">';
+  h+='<div class="dch" onclick="togDef(this)" data-did="def-narc-understanding">';
+  h+='<div class="dcd" style="background:var(--g2)"></div>';
+  h+='<span class="dcn">Understanding these patterns</span>';
+  h+='<span class="dct" id="ddt-narc-understanding">▾</span></div>';
+  h+='<div class="dcb" id="def-narc-understanding">';
+  h+='<div class="dtx" style="margin-bottom:10px">Narcissistic Personality Disorder has one of the lowest treatment response rates of any personality structure — not because change is impossible, but because the disorder itself impairs the insight and motivation required for it.</div>';
+  h+='<div class="dtx" style="margin-bottom:10px">For covert presentation specifically, the person rarely identifies their behavior as problematic. The covert style allows them to maintain a self-concept of victim, misunderstood good person, or devoted family member.</div>';
+  h+='<div class="dtx">What this means: do not build your peace on the expectation of change. Build it on your own responses, your own clarity, and your relationship\'s capacity to be a protected space.</div>';
+
+  // Resistance section
+  h+='<div class="dgt" style="font-size:15px;padding:14px 0 8px">What to expect when you resist</div>';
+  var resist=[
+    {t:'DARVO',d:'Deny, Attack, Reverse Victim and Offender. When confronted the N will often deny the behavior, attack the person who named it, and reposition themselves as the real victim.',w:'The more accurate your observation, the more intense the DARVO response. Intensity is not evidence you were wrong — it is often evidence you were right.'},
+    {t:'Escalation',d:'When covert tools stop producing the desired response the behavior intensifies before it recalibrates.',w:'Escalation is temporary if you hold the boundary consistently. It is the system testing whether the new response is real.'},
+    {t:'Flying monkey activation',d:'When direct approaches fail the N may recruit others to apply pressure, relay messages, or question your perception.',w:'Information shared with people in their orbit should be treated as information shared with the N directly.'},
+    {t:'The victim pivot',d:'When confronted or when a boundary is set the N repositions themselves as the injured party. Their suffering becomes the subject.',w:'The victim pivot is designed to produce guilt and retraction. You can acknowledge their feelings without retracting the boundary.'},
+    {t:'Covert retaliation',d:'Rather than open conflict: subtle punishment, increased coldness, strategic exclusion, quiet undermining. The retaliation is deniable.',w:'Do not chase the warmth back. Stay even. Log the retaliation pattern over time.'},
+    {t:'Hoovering',d:'After conflict or distance the N attempts to pull the target back in with warmth or gestures — enough to restore access without actual change.',w:'Hoovering is not repair. It is restoration of access. Watch behavior over time, not over a single warm interaction.'}
+  ];
+  resist.forEach(function(r){
+    h+='<div style="margin-bottom:12px;padding:12px;background:var(--card);border-radius:8px;border-left:3px solid var(--g2)">';
+    h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--accent-m);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px">'+r.t+'</div>';
+    h+='<div class="dtx" style="margin-bottom:5px">'+r.d+'</div>';
+    if(_defDetail)h+='<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em"><span style="color:var(--safe)">What to expect: </span>'+r.w+'</div>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+
+  // Behavior definitions by group — collapsible
+  GROUPS.forEach(function(g){
+    var col=g.c;
+    var cats=allCats().filter(function(c){return c.g===g.id&&(!ql||c.l.toLowerCase().includes(ql)||(c.w||'').toLowerCase().includes(ql));});
+    if(!cats.length)return;
+    cats.sort(function(a,b){return a.l.localeCompare(b.l);});
+    // When search is active, expand groups that have matches
+    var op=ql?true:(DEF_SEC_OPEN[g.id]===true);
+    h+='<div class="def-group-hdr" onclick="togDefSec(this)" data-gid="'+g.id+'" style="border-left:3px solid '+gc(col)+'">';
+    h+='<span class="def-group-name" style="color:'+gc(col)+'">'+g.name+'</span>';
+    h+='<span class="def-group-count">'+cats.length+'</span>';
+    h+='<span class="def-group-arrow'+(op?' op':'')+'">›</span>';
+    h+='</div>';
+    h+='<div class="def-group-body" id="defg-'+g.id+'" style="max-height:'+(op?'9999px':'0')+';overflow:hidden;transition:max-height .25s ease">';
+    cats.forEach(function(cat){
+      var savedNote=state.catNotes[cat.id]||'';
+      h+='<div class="dc2"><div class="dch" onclick="togDef(this)" data-did="def-'+cat.id+'">';
+      h+='<div class="dcd" style="background:'+gc(col)+'"></div>';
+      h+='<span class="dcn">'+cat.l+(savedNote?' ✦':'')+'</span>';
+      h+='<span class="dct" id="ddt-'+cat.id+'">▾</span></div>';
+      h+='<div class="dcb" id="def-'+cat.id+'">';
+      h+='<div class="dtx">'+(cat.w||'')+'</div>';
+      if(_defDetail){
+        if(cat.ex){h+='<div class="dsl">Example</div><div class="dex">'+cat.ex+'</div>';}
+        if(cat.foldNote){h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:6px 10px;background:var(--card);border-radius:4px">'+cat.foldNote+'</div>';}
+        h+='<div class="dsl">Internal reminder</div><div class="dtx">'+(cat.int||'')+'</div>';
+        if(cat.sc&&cat.sc.length){h+='<div class="dsl">Response scripts</div>';cat.sc.forEach(function(s){h+='<div class="dsc">'+s+'</div>';});}
+        h+='<button class="deeper-btn" onclick="togDeeper(this)">Go deeper</button>';
+        h+='<div class="deeper-block" id="deep-'+cat.id+'">';
+        h+='<div class="dsl">Beginning correction</div><div class="dtx" style="color:var(--safe)">'+(cat.correction||'')+'</div>';
+        h+='</div>';
+        h+='<div class="cat-note-area">';
+        h+='<textarea class="cat-note-ta" id="dn-'+cat.id+'" placeholder="Your notes...">'+savedNote+'</textarea>';
+        h+='<button class="cat-note-btn" onclick="saveCatNote2(this)" data-cid="'+cat.id+'" data-ta="dn-'+cat.id+'">Save note</button></div>';
+      }
+      var inLog=isVisibleInLog(cat);
+      var hiddenCoreItem=isCore(cat.id)&&isHidden(cat.id);
+      if(!inLog||hiddenCoreItem){
+        h+='<button class="add-log-btn" onclick="addCatToLog(event,\''+cat.id+'\')">'+(hiddenCoreItem?'＋ Restore to Log':'＋ Add to Log')+'</button>';
+      }else{
+        h+='<div class="in-log-badge">✓ In Log tab</div>';
+      }
+      h+='</div></div>';
+    });
+    h+='</div>';
+  });
+  var defc=document.getElementById('defc');if(defc)defc.innerHTML=h;
+}
+function togDef(el){
+  var did=el.getAttribute('data-did');
+  var b=document.getElementById(did);if(!b)return;
+  var op=b.classList.contains('op');
+  b.classList.toggle('op',!op);
+  var catId=did.replace('def-','');
+  var t=document.getElementById('ddt-'+catId);if(t)t.classList.toggle('op',!op);
+}
+function togDeeper(btn){
+  var block=btn.nextElementSibling;if(!block)return;
+  var op=block.classList.contains('op');
+  block.classList.toggle('op',!op);
+  btn.textContent=op?'Go deeper':'Less';
+}
+function togDefSec(el){
+  var gid=el.getAttribute('data-gid');
+  DEF_SEC_OPEN[gid]=DEF_SEC_OPEN[gid]===true?false:true;
+  var body=document.getElementById('defg-'+gid);
+  var arrow=el.querySelector('.def-group-arrow');
+  var op=DEF_SEC_OPEN[gid];
+  if(body){body.style.maxHeight=op?'9999px':'0';}
+  if(arrow){arrow.classList.toggle('op',op);}
+}
+function fd(q){renderDefs(q);}
+
+function saveCatNote2(el){
+  var catId=el.getAttribute('data-cid');var taId=el.getAttribute('data-ta');
+  var ta=document.getElementById(taId);if(!ta)return;
+  state.catNotes[catId]=ta.value.trim();save();toast('Note saved.');
+  renderDefs(document.getElementById('def-search')?document.getElementById('def-search').value:'');
+}
+
+// INSIGHTS / STATS
+function renderStats(){
+  var all=state.moments.filter(function(e){return !e.isSummary;});
+  var total=all.length;
+  var today=new Date().toDateString();
+  var todayCnt=all.filter(function(e){return new Date(e.ts).toDateString()===today;}).length;
+  var wkCnt=all.filter(function(e){return(new Date()-new Date(e.ts))/(1000*60*60*24)<=7;}).length;
+  var cultCnt=all.filter(function(e){return e.cultural;}).length;
+  var catCts={};all.forEach(function(e){catCts[e.cid]=(catCts[e.cid]||0)+1;});
+  var catArr=[];Object.keys(catCts).forEach(function(k){catArr.push([k,catCts[k]]);});catArr.sort(function(a,b){return b[1]-a[1];});var topCats=catArr.slice(0,8);
+  var grpCts={};all.forEach(function(e){grpCts[e.grp]=(grpCts[e.grp]||0)+1;});
+  var grpVals=[1];Object.keys(grpCts).forEach(function(k){grpVals.push(grpCts[k]);});var gmx=Math.max.apply(null,grpVals);
+  var dayCts={};all.forEach(function(e){var d=new Date(e.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});dayCts[d]=(dayCts[d]||0)+1;});
+  var topDay=null;var topDN=0;Object.keys(dayCts).forEach(function(k){if(dayCts[k]>topDN){topDN=dayCts[k];topDay=k;}});
+  var h='<div class="stl">Overview</div>';
+  h+='<div class="sgr">';
+  h+='<div class="sc2"><div class="scl">Total moments</div><div class="scv">'+total+'</div></div>';
+  h+='<div class="sc2"><div class="scl">Today</div><div class="scv">'+todayCnt+'</div></div>';
+  h+='<div class="sc2"><div class="scl">This week</div><div class="scv">'+wkCnt+'</div></div>';
+  h+='<div class="sc2"><div class="scl">Cultural flags</div><div class="scv">'+cultCnt+'</div></div>';
+  h+='</div>';
+  if(topDay)h+='<div style="padding:0 16px 4px"><div class="sc2" style="margin-top:8px"><div class="scl">Most active day</div><div class="scv" style="font-size:22px">'+topDay+'</div><div class="scs">'+topDN+' moments</div></div></div>';
+  if(topCats.length){
+    h+='<div class="stl">Most frequent</div>';var mx=topCats[0][1];
+    topCats.forEach(function(tc){var cat=allCats().find(function(c){return c.id===tc[0];});if(!cat)return;var col=gColor(cat.g);h+='<div class="fr"><div class="fd" style="background:'+gc(col)+'"></div><div class="fla">'+cat.l+'</div><div class="fbt"><div class="fbf" style="width:'+Math.round((tc[1]/mx)*100)+'%;background:'+gc(col)+'"></div></div><div class="fnu">'+tc[1]+'</div></div>';});
+  }
+  h+='<div class="stl">By group</div>';
+  GROUPS.forEach(function(g){var cnt=grpCts[g.id]||0;h+='<div class="fr"><div class="fd" style="background:'+gc(g.c)+'"></div><div class="fla">'+g.name+'</div><div class="fbt"><div class="fbf" style="width:'+Math.round((cnt/gmx)*100)+'%;background:'+gc(g.c)+'"></div></div><div class="fnu">'+cnt+'</div></div>';});
+  h+='<div class="stl">Export</div>';
+  h+='<button class="eb2" onclick="expJSON()">Download as JSON</button>';
+  h+='<button class="eb2" onclick="expCSV()">Download as CSV</button>';
+  h+='<div class="stl">Import</div>';
+  h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;padding:0 16px;margin-bottom:8px;line-height:1.6">Import a JSON export from another device. Duplicates are skipped automatically.</div>';
+  h+='<input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(this)">';
+  h+='<button class="eb2" onclick="document.getElementById(\'import-file\').click()">Import from JSON</button>';
+  h+='<div class="stl">Custom categories</div><div class="ccf">';
+  h+='<input class="cci" id="ccn" placeholder="Category name (required)...">';
+  h+='<select class="ccs" id="ccg">'+GROUPS.map(function(g){return'<option value="'+g.id+'">'+g.name+'</option>';}).join('')+'</select>';
+  h+='<textarea class="cci" id="ccw" placeholder="What this behavior is..." style="height:60px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="ccex" placeholder="Example..." style="height:50px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="ccint" placeholder="Internal reminder..." style="height:50px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="ccsc" placeholder="How to respond..." style="height:50px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="cccor" placeholder="Beginning correction..." style="height:50px;resize:vertical"></textarea>';
+  h+='<button class="ccb" onclick="addCC()">Add category</button></div>';
+  if(state.custom.length){h+='<div class="ccl">';state.custom.forEach(function(c){h+='<div class="cci2"><span class="cin2">'+c.l+'</span><button class="cdl" onclick="delCC(this)" data-cid="'+c.id+'">✕</button></div>';});h+='</div>';}
+  var stp=document.getElementById('stp');if(stp)stp.innerHTML=h;
+}
+function addCC(){
+  var n=(document.getElementById('ccn')||{}).value||'';n=n.trim();if(!n)return;
+  var g=(document.getElementById('ccg')||{}).value||GROUPS[0].id;
+  var w=(document.getElementById('ccw')||{}).value||'';
+  var ex=(document.getElementById('ccex')||{}).value||'';
+  var int2=(document.getElementById('ccint')||{}).value||'';
+  var sc=(document.getElementById('ccsc')||{}).value||'';
+  var cor=(document.getElementById('cccor')||{}).value||'';
+  state.custom.push({id:'cc-'+Date.now(),g:g,l:n,w:w||'Custom category.',ex:ex,int:int2||'You defined this pattern.',sc:sc?[sc]:[],correction:cor});
+  ['ccn','ccw','ccex','ccint','ccsc','cccor'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  save();renderStats();rCats();toast('Category added.');
+}
+function delCC(el){
+  var id=el.getAttribute('data-cid');
+  state.custom=state.custom.filter(function(c){return c.id!==id;});save();renderStats();rCats();toast('Removed.');
+}
+
+// SUMMARY
+function genSummary(){
+  var moments=state.moments.filter(function(e){return !e.isSummary;});
+  if(!moments.length){toast('No moments to summarize.');return;}
+  var hq=(document.getElementById('hist-q')||{}).value||'';
+  var hdf=(document.getElementById('hist-df')||{}).value||'';
+  var hdt=(document.getElementById('hist-dt')||{}).value||'';
+  var filtered=moments.filter(function(e){
+    if(hq&&!e.cl.toLowerCase().includes(hq.toLowerCase())&&!(e.note||'').toLowerCase().includes(hq.toLowerCase()))return false;
+    if(hdf&&new Date(e.ts)<new Date(hdf))return false;
+    if(hdt){var t2=new Date(hdt);t2.setHours(23,59,59);if(new Date(e.ts)>t2)return false;}
+    return true;
+  });
+  if(!filtered.length){toast('No moments in current filter range.');return;}
+  var dates=filtered.map(function(e){return new Date(e.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});});
+  var uniqueDates=dates.filter(function(d,i){return dates.indexOf(d)===i;});
+  var catCts={};var grpCts={};var cultCnt=0;
+  filtered.forEach(function(e){catCts[e.cid]=(catCts[e.cid]||0)+1;grpCts[e.grp]=(grpCts[e.grp]||0)+1;if(e.cultural)cultCnt++;});
+  var topCatId=null;var topCnt=0;Object.keys(catCts).forEach(function(k){if(catCts[k]>topCnt){topCnt=catCts[k];topCatId=k;}});
+  var topCat=topCatId?allCats().find(function(c){return c.id===topCatId;}):null;
+  var topGrpId=null;var topGrpCnt=0;Object.keys(grpCts).forEach(function(k){if(grpCts[k]>topGrpCnt){topGrpCnt=grpCts[k];topGrpId=k;}});
+  var topGrp=topGrpId?GROUPS.find(function(g){return g.id===topGrpId;}):null;
+  var now=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  var lines=['SUMMARY — Generated: '+now,'DATES: '+uniqueDates.join(', '),'TOTAL MOMENTS: '+filtered.length+(cultCnt?' ('+cultCnt+' culturally flagged)':''),'','TOP BEHAVIOR: '+(topCat?topCat.l+' ('+topCnt+'×)':'none'),'TOP GROUP: '+(topGrp?topGrp.name+' ('+topGrpCnt+'×)':'none'),'','BREAKDOWN BY GROUP:'];
+  GROUPS.forEach(function(g){var cnt=grpCts[g.id]||0;if(cnt>0)lines.push('  '+g.name+': '+cnt);});
+  lines.push('','BREAKDOWN BY BEHAVIOR:');
+  var catArr=[];Object.keys(catCts).forEach(function(k){catArr.push([k,catCts[k]]);});catArr.sort(function(a,b){return b[1]-a[1];});
+  catArr.forEach(function(r){var cat=allCats().find(function(c){return c.id===r[0];});if(cat)lines.push('  '+cat.l+': '+r[1]);});
+  lines.push('','NOTES:');
+  filtered.filter(function(e){return e.note;}).forEach(function(e){var d=new Date(e.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});lines.push('  ['+d+'] '+e.cl+': '+e.note);});
+  var txt=lines.join('\n');
+  state.moments.unshift({id:Date.now(),cid:'summary',cl:'Summary',grp:'attention',gn:'Summary',note:txt,ts:new Date().toISOString(),isSummary:true});
+  save();renderHistory();toast('Summary saved to History.');
+}
+
+// EXPORT/IMPORT
+function expJSON(){
+  var d=JSON.stringify({moments:state.moments,exported:new Date().toISOString()},null,2);
+  var b=new Blob([d],{type:'application/json'});var u=URL.createObjectURL(b);
+  var a=document.createElement('a');a.href=u;a.download='pattern-journal-export.json';a.click();URL.revokeObjectURL(u);
+}
+function expCSV(){
+  var rows=[['Date','Time','Category','Group','Cultural','Note']];
+  state.moments.forEach(function(e){var dt=new Date(e.ts);rows.push([dt.toLocaleDateString('en-US'),dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),e.cl,e.gn,e.cultural?'yes':'no','"'+(e.note||'').replace(/"/g,'""')+'"']);});
+  var csv=rows.map(function(r){return r.join(',');}).join('\n');
+  var b=new Blob([csv],{type:'text/csv'});var u=URL.createObjectURL(b);
+  var a=document.createElement('a');a.href=u;a.download='pattern-journal-export.csv';a.click();URL.revokeObjectURL(u);
+}
+function importJSON(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      var incoming=data.moments||[];
+      if(!Array.isArray(incoming)||!incoming.length){toast('No moments found in file.');return;}
+      var existingIds=new Set(state.moments.map(function(e){return e.id;}));
+      var added=0;
+      incoming.forEach(function(en){if(!existingIds.has(en.id)){state.moments.push(en);existingIds.add(en.id);added++;}});
+      state.moments.sort(function(a,b){return new Date(b.ts)-new Date(a.ts);});
+      save();rAll();renderStats();toast('Imported '+added+' moment'+(added===1?'':'s')+'.');
+    }catch(err){toast('Could not read file.');}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+// TOAST
+function toast(msg){var t=document.getElementById('tst');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2000);}
+
+// GLOSSARY
+function renderGlossary(){
+  var glp=document.getElementById('glp');if(!glp)return;
+  var GLOSS=[
+    {t:'Complex PTSD (C-PTSD)',cat:'Trauma Responses',
+     d:'A trauma response that develops from prolonged, repeated relational trauma rather than a single event. Unlike standard PTSD it is characterized by ongoing dysregulation across emotional, relational, identity, and somatic domains because the source of harm was a person and the exposure was sustained over time.',
+     ex:'A person who grew up with a narcissistic parent may find themselves chronically on edge in relationships, unable to trust warmth when it is offered, prone to intense shame responses, and unsure of who they are outside of how they were defined by the person who harmed them.',
+     cor:'Trauma-informed therapy is the primary pathway. EMDR, somatic therapy, and Internal Family Systems have strong evidence bases for C-PTSD specifically. The first step is often simply naming it -- understanding that what you are experiencing is a normal response to abnormal sustained conditions, not a character flaw.'},
+    {t:'Hypervigilance',cat:'Trauma Responses',
+     d:'A persistent state of elevated alertness and scanning for threat. The nervous system learned that danger could arrive at any time so it stays perpetually activated. In relational contexts it shows up as hypersensitivity to tone, energy shifts, facial expressions, and word choice.',
+     ex:'Someone who grew up with an unpredictable narcissistic parent may find themselves constantly reading rooms, tracking other people\'s moods before engaging, and feeling exhausted by social situations because they are always monitoring for threat even when none is present.',
+     cor:'Somatic practices that help the nervous system learn the current environment is safe -- breathwork, grounding, body-based therapy. The goal is not to eliminate awareness of others but to reduce the automatic threat response so reading the room becomes a choice rather than a compulsion.'},
+    {t:'Trauma bonding',cat:'Trauma Responses',
+     d:'A psychological attachment that forms under conditions of intermittent reward and punishment. The unpredictability of the narcissist\'s warmth and withdrawal creates a powerful attachment response. The brain becomes oriented toward pursuing the reward and tolerating the punishment to get it. Feels like love but is a survival adaptation.',
+     ex:'A person in a relationship with a narcissistic partner may find themselves deeply attached despite consistent harm -- missing the person during withdrawals, feeling intensely connected during warm periods, and unable to leave even when they clearly see the pattern.',
+     cor:'Understanding the neurological mechanism helps -- the intermittent reinforcement schedule is the same one that makes gambling addictive. Therapy focused on identifying the cycle, building support outside the relationship, and developing a coherent narrative of what is actually happening rather than what the warm periods promise.'},
+    {t:'Freeze response',cat:'Trauma Responses',
+     d:'One of the four primary trauma responses alongside fight, flight, and fawn. The nervous system becomes still, quiet, and internal as a survival strategy. In relational contexts it looks like going quiet, withdrawing into observation, becoming emotionally flat when threat is perceived.',
+     ex:'In a room with a narcissistic person someone with a dominant freeze response may find themselves going quiet, becoming an observer, feeling disconnected from their own voice, and unable to access what they want to say until hours later when they are safe.',
+     cor:'Learning to recognize the freeze as it is happening rather than after the fact. Somatic work to help the body find movement and voice when it wants to go still. Gradually practicing small verbal responses in low-stakes moments to rebuild the pathway between internal experience and external expression.'},
+    {t:'Fawn response',cat:'Trauma Responses',
+     d:'A trauma response where the person automatically appeases, accommodates, and prioritizes the comfort of a threatening person to avoid conflict or punishment. Developed as a survival strategy when fighting or fleeing were not viable options. Shows up as chronic people-pleasing and automatic accommodation.',
+     ex:'A child of a narcissistic parent may grow into an adult who automatically agrees with people, apologizes reflexively, adjusts their behavior to manage others\' moods, and feels a sense of threat when someone around them is displeased even when that displeasure has nothing to do with them.',
+     cor:'Learning to pause before automatic accommodation. Asking internally -- do I actually want to do this, or am I doing it to manage someone else\'s state? Beginning to tolerate the discomfort of not immediately appeasing. Small acts of non-accommodation in low-stakes situations build the muscle over time.'},
+    {t:'Ego erosion',cat:'Identity and Self',
+     d:'The gradual wearing down of a person\'s sense of self through sustained undermining, invalidation, criticism, and reframing. The person begins to doubt their own perceptions, preferences, competencies, and worth. Often so gradual it is not recognized until the person is far from who they used to be.',
+     ex:'A person in a long-term relationship with a narcissistic partner may stop expressing opinions, stop pursuing interests that were not approved of, stop trusting their own judgment, and feel hollowed out -- unsure what they think or want independently.',
+     cor:'Rebuilding self-knowledge through small consistent acts of self-referral. What do I think? What do I want? What do I notice? Journaling, therapy, and spending time with people who reflect your full self back to you rather than a diminished version.'},
+    {t:'Identity diffusion',cat:'Identity and Self',
+     d:'A loss of a clear, stable sense of who one is outside of the narcissist\'s definition. The person may not know their own opinions, preferences, values, or desires independently of what the narcissist approved of or needed them to be.',
+     ex:'An adult who grew up as a golden child may excel at performing whatever role is needed but feel a persistent emptiness when alone -- unsure who they are when no one is watching or needing anything from them.',
+     cor:'Identity work as a practice of curiosity. What do I notice I enjoy when no one is assigning meaning to it? What opinions arise in me before I edit them for an audience? Therapy focused on authentic self-expression and individuation.'},
+    {t:'Scapegoating effects',cat:'Identity and Self',
+     d:'Long-term psychological impacts of having been designated the identified problem person in a narcissistic family system. The scapegoat absorbs the family\'s projected dysfunction and internalizes a narrative of being inherently flawed or the cause of problems that were never theirs to carry.',
+     ex:'An adult who was the family scapegoat may carry chronic shame, automatically assume blame in conflict, feel fundamentally defective, and struggle to believe that relationships are safe or that they deserve to be treated well.',
+     cor:'Externalization -- learning to locate the dysfunction in the system rather than in the self. Therapy focused on shame reduction, accurate attribution of responsibility, and rebuilding a narrative of self that is not organized around being the problem.'},
+    {t:'Golden child conditioning',cat:'Identity and Self',
+     d:'The psychological impact of having been idealized and used as a narcissistic extension in a family system. The golden child\'s identity becomes organized around performance, achievement, and meeting the narcissist\'s needs. Worth feels contingent on continued excellence and approval.',
+     ex:'An adult who was the golden child may be highly competent externally while feeling chronically anxious, unable to tolerate failure, uncertain about their own desires, and confused about why they feel empty despite achieving everything that was supposed to matter.',
+     cor:'Separating worth from performance. Learning to exist and be loved outside of achievement contexts. Therapy focused on unconditional self-regard and building an identity not contingent on being exceptional.'},
+    {t:'Parentification effects',cat:'Identity and Self',
+     d:'Long-term consequences of having been placed in an emotional caretaking role for a parent during childhood. The parentified child learns their job is to manage the parent\'s emotional state and carries this role into adult relationships as a default orientation.',
+     ex:'An adult who was parentified may automatically take responsibility for others\' emotional states, feel anxious when someone around them is unhappy, have difficulty being cared for without immediately reciprocating, and feel pervasive guilt about having their own needs.',
+     cor:'Learning to locate responsibility accurately -- whose feelings are mine to manage and whose are not? Practicing receiving care without immediately deflecting. Therapy focused on the distinction between empathy and responsibility.'},
+    {t:'Codependency',cat:'Relational Impacts',
+     d:'A relational pattern where one person\'s sense of self, stability, and worth becomes organized around managing another person\'s emotions, needs, or behavior. The codependent person loses track of their own needs and identity in service of regulating the other.',
+     ex:'A person in a codependent relationship may spend most of their mental energy anticipating the other person\'s moods, adjusting behavior to prevent conflict, and feeling responsible for outcomes that are not in their control.',
+     cor:'Shifting focus from the other person\'s state to one\'s own. Regular self-check-ins. Gradually reducing accommodating behaviors. Codependents Anonymous and therapy focused on self-differentiation are both useful pathways.'},
+    {t:'Anxious attachment',cat:'Relational Impacts',
+     d:'An attachment style characterized by fear of abandonment, hypervigilance to relational signals, a tendency to seek reassurance, and difficulty tolerating distance or uncertainty in relationships.',
+     ex:'A person with anxious attachment may constantly monitor their partner\'s mood for signs of withdrawal, need frequent reassurance, interpret normal distance as impending abandonment, and feel persistent low-grade anxiety that the relationship is about to end.',
+     cor:'Identifying the pattern without shame -- it developed for a reason. Learning to self-soothe rather than seeking external reassurance as the primary regulation strategy. Therapy focused on building internal security.'},
+    {t:'Betrayal trauma',cat:'Relational Impacts',
+     d:'Trauma that occurs specifically when someone depended upon for safety, care, or protection causes harm. The betrayal by a trusted person creates a specific wound that affects the person\'s ability to trust, feel safe in relationships, and integrate the contradiction between who the person was supposed to be and what they actually did.',
+     ex:'A person whose narcissistic parent consistently violated their trust may develop a deep difficulty trusting even safe relationships because the template for trusted people includes betrayal.',
+     cor:'Distinguishing between the person who caused harm and people who are currently safe. Safe, consistent relationships and therapy focused on processing the original betrayal are both necessary.'},
+    {t:'Hyperindependence',cat:'Relational Impacts',
+     d:'An extreme self-reliance developed as a protective adaptation to having needs consistently unmet, punished, or exploited. The person learns that depending on others is dangerous and becomes rigidly self-sufficient.',
+     ex:'A person raised by a narcissistic parent may become highly capable as an adult but find it nearly impossible to ask for help, accept support, or show vulnerability.',
+     cor:'Small deliberate acts of allowing help. Choosing one safe person and practicing one act of vulnerability. Noticing the internal resistance -- the belief that needing anything makes you a burden or a target -- and working with that belief directly.'},
+    {t:'Gaslighting effects',cat:'Cognitive and Perceptual',
+     d:'The long-term perceptual and cognitive impacts of sustained gaslighting. Chronic self-doubt about one\'s own perceptions, memories, and interpretations develops as a direct result of someone repeatedly reframing reality.',
+     ex:'A person who was consistently gaslit may preface accurate observations with "maybe I\'m wrong but..." or "I might be imagining this..." They may second-guess themselves so habitually that they cannot identify their own certainty.',
+     cor:'Rebuilding trust in one\'s own perception through consistent self-validation. Keeping a record of observations so the pattern becomes visible over time. Therapy focused on reality testing and learning to distinguish between genuine uncertainty and conditioned self-doubt.'},
+    {t:'Minimization habit',cat:'Cognitive and Perceptual',
+     d:'A learned tendency to downplay one\'s own experience, needs, or pain -- developed as an adaptation to an environment where expressing needs was punished, ignored, or met with contempt.',
+     ex:'"It wasn\'t that bad." "I\'m probably overreacting." "Other people have it worse." Said automatically before anyone has questioned whether the experience was valid.',
+     cor:'Catching the minimization in real time. Before saying "it wasn\'t that bad" pausing to ask -- was it actually not that bad, or am I saying that because it feels safer than acknowledging how much it hurt?'},
+    {t:'Over-explanation habit',cat:'Cognitive and Perceptual',
+     d:'The tendency to justify, explain, and defend normal choices, feelings, and preferences -- developed in environments where everything required explanation to avoid punishment. The person carries the habit of justification into relationships where no one asked for a reason.',
+     ex:'Someone asked what they want for dinner responds with a three-sentence explanation of why they want what they want, anticipating a challenge that was never coming.',
+     cor:'Practicing plain statements without justification. "No thank you." is a complete sentence. Noticing when the explanation reflex activates and asking -- did anyone ask me to justify this?'},
+    {t:'Apologizing reflex',cat:'Cognitive and Perceptual',
+     d:'Automatic apologizing for existing, taking up space, having needs, or being perceived as an inconvenience. Developed in environments where the person\'s presence and needs were treated as burdens.',
+     ex:'Apologizing when someone bumps into you. Apologizing before making a request. Apologizing for having an opinion. Apologizing for crying.',
+     cor:'Replacing automatic apologies with neutral acknowledgments. "Excuse me" instead of "I\'m so sorry." Noticing when an apology is genuinely warranted versus when it is a reflex to preemptively manage someone else\'s potential displeasure.'},
+    {t:'Reality testing impairment',cat:'Cognitive and Perceptual',
+     d:'Difficulty knowing what is real, what is a reasonable response, and what is distortion -- developed through sustained exposure to a person who consistently reframed reality.',
+     ex:'Something genuinely upsetting happens. The person\'s first response is not to feel upset but to audit whether they are allowed to feel upset before permitting themselves to have the feeling.',
+     cor:'Learning to feel first and audit second. Allowing the initial response to exist before evaluating it. Therapy focused on validating and trusting one\'s own emotional responses as data rather than problems to be assessed for accuracy.'},
+    {t:'Cognitive dissonance',cat:'Cognitive and Perceptual',
+     d:'The persistent internal conflict between what one observes and what the narcissist\'s narrative insists should be observed. Living in sustained cognitive dissonance produces confusion, exhaustion, and a fragmented sense of reality.',
+     ex:'Watching someone behave in a way that is clearly controlling while being told -- and half-believing -- that it is actually love and care. Knowing what you saw while simultaneously wondering if you invented it.',
+     cor:'Naming the dissonance explicitly. "I observed X. I am being told X means Y. I do not believe that." Writing it down so the two versions exist in parallel and can be examined. Consistently trusting observation over narrative over time.'},
+    {t:'People-pleasing compulsion',cat:'Behavioral and Somatic',
+     d:'Chronic, automatic accommodation of others\' needs and preferences at the expense of one\'s own. Developed as a survival strategy in narcissistic environments where safety or approval depended on keeping others regulated.',
+     ex:'Automatically agreeing with what others want before checking what you want. Feeling responsible for everyone\'s comfort in a room. Saying yes and feeling resentment later because the yes was not genuine.',
+     cor:'Introducing a pause between the accommodation impulse and the response. "Let me think about that." buys time to check in before the automatic yes. Gradually building tolerance for disappointing people and surviving the discomfort of their reaction.'},
+    {t:'Somatic symptoms',cat:'Behavioral and Somatic',
+     d:'Physical manifestations of chronic relational stress and unprocessed trauma. The body absorbs what the mind adapts to. Common presentations include chronic tension, fatigue, digestive issues, headaches, immune dysregulation, and difficulty sleeping.',
+     ex:'Someone in a long-term narcissistic relationship may experience persistent physical symptoms that have no clear medical cause -- chronic stomach problems, tension headaches, jaw clenching, or a persistent sense of physical heaviness.',
+     cor:'Somatic therapy, body-based practices, and trauma-informed approaches that work directly with the body. Recognizing that physical symptoms may be the body\'s way of expressing what was not allowed to be expressed relationally.'},
+    {t:'Emotional blunting',cat:'Behavioral and Somatic',
+     d:'A reduction in the range or intensity of emotional experience developed as a protective adaptation to chronic emotional overwhelm, invalidation, or punishment. The person may feel numb, disconnected from their own emotional states, or unable to identify what they feel.',
+     ex:'Something objectively significant happens -- good or bad -- and the person feels very little. Or they know intellectually they should feel something but cannot access the feeling.',
+     cor:'Gradual safe exposure to emotional experience in therapeutic contexts. Somatic work to reconnect body sensation with feeling. Allowing small emotions to be felt fully without immediately managing or suppressing them.'},
+    {t:'Identified patient',cat:'Family System',
+     d:'In family systems theory, the person in the family who presents with symptoms -- anxiety, depression, behavioral problems -- that are actually expressions of the family system\'s dysfunction rather than individual pathology.',
+     ex:'The child who acts out, the teenager who develops anxiety, the adult who struggles in relationships -- while the narcissistic parent is never identified as the source of the dysfunction.',
+     cor:'Relocating the problem from the individual to the system. Understanding that the symptoms carried belong to the system, not to a deficiency in the individual. This reframe is often the beginning of significant relief.'},
+    {t:'Flying monkeys',cat:'Family System',
+     d:'People who, wittingly or not, act on behalf of the narcissist -- carrying messages, validating the narcissist\'s narrative, applying pressure to targets. May be conscious agents or genuinely conditioned believers in the narcissist\'s version of events.',
+     ex:'A family member who calls to relay grievances. A mutual friend who repeats the narcissist\'s framing. Someone who pressures the target to apologize or comply.',
+     cor:'Recognizing flying monkey behavior without necessarily assigning malicious intent. Not engaging with proxy communication -- "that\'s between me and them" redirects the message back to its source. Information shared with flying monkeys should be treated as information shared with the narcissist directly.'},
+    {t:'Enablers',cat:'Family System',
+     d:'People in the narcissist\'s orbit who facilitate the behavior through compliance, minimization, defense, or active participation. Enablers are not always aware of their role. Many are deeply conditioned themselves.',
+     ex:'A partner who minimizes the narcissist\'s behavior to others. A family member who consistently explains away harmful patterns. A friend who tells the target they are overreacting.',
+     cor:'For those impacted by enablers: not relying on them for validation, understanding that their minimization is a product of their own conditioning, and not over-investing in changing their perspective.'},
+    {t:'Narcissistic family system',cat:'Family System',
+     d:'A family organized around the needs, perceptions, and emotional regulation of a narcissistic central figure. All roles, relationships, and communication patterns are defined in relation to that person. Children typically take on defined roles -- golden child, scapegoat, lost child, or mascot.',
+     ex:'A family where all conversations eventually center on one parent. Where that parent\'s mood sets the tone for every gathering. Where family members have learned their roles and perform them automatically.',
+     cor:'Differentiation -- developing an identity and relational style that exists outside of the assigned role. This is slow work and often destabilizes the system before it stabilizes the individual.'},
+    {t:'Triangulation effects',cat:'Family System',
+     d:'Long-term relational impacts of having been consistently triangulated in family communication. The person develops hyperawareness of relational dynamics, difficulty with direct communication, and anxiety about being caught between people.',
+     ex:'An adult who was consistently triangulated as a child may find themselves automatically mediating between people, reluctant to speak directly about conflict, and hyperaware of loyalty dynamics in groups.',
+     cor:'Practicing direct communication -- speaking to the person the message is for rather than through intermediaries. Recognizing that being direct is not the same as being disloyal.'},
+    {t:'Enmeshment legacy',cat:'Family System',
+     d:'The long-term difficulty with individuation, boundaries, and emotional separateness that develops from growing up in an enmeshed family system. Adults from enmeshed families may struggle to know where they end and others begin.',
+     ex:'An adult from an enmeshed family may feel responsible for their parent\'s emotional state even while living independently, feel guilty for making autonomous choices, and experience differentiation as a form of betrayal.',
+     cor:'Individuation work -- developing a relationship with one\'s own thoughts, feelings, and preferences that exists independently of the family. Learning to tolerate the guilt that comes with differentiation without treating it as a signal that something is wrong.'},
+    {t:'Narcissistic abuse syndrome',cat:'Family System',
+     d:'An informal but clinically recognized constellation of symptoms that develops specifically from sustained narcissistic abuse. Includes hypervigilance, chronic self-doubt, emotional dysregulation, trauma bonding, identity confusion, and people-pleasing compulsion. Not yet a formal DSM diagnosis but increasingly recognized in trauma-informed clinical literature.',
+     ex:'A person who has been in a long-term relationship with a narcissist may present with a recognizable cluster: they doubt themselves constantly, they are exhausted from monitoring others, they feel responsible for things outside their control, and they often do not identify what happened to them as abuse because it was so gradual and normalized.',
+     cor:'Naming it is the first and often most significant step. Understanding that the cluster of symptoms has a coherent cause rather than representing personal deficiency. Trauma-informed therapy, connection with others who have similar experiences, and gradual rebuilding of self-trust over time.'}
+  ];
+  var h='<div class="gl-disc"><div class="gl-disc-title">About this glossary</div>These terms describe patterns that can develop in people who have been in long-term relationships with narcissists. Understanding these terms is not self-diagnosis — it is a framework for making sense of responses that developed for good reasons in difficult conditions.</div>';
+  var categories=[
+    {label:'Trauma responses',ids:[0,1,2,3,4]},
+    {label:'Identity and self',ids:[5,6,7,8,9]},
+    {label:'Relational impacts',ids:[10,11,12,13]},
+    {label:'Cognitive and perceptual',ids:[14,15,16,17,18,19]},
+    {label:'Behavioral and somatic',ids:[20,21,22]},
+    {label:'Family system concepts',ids:[23,24,25,26,27,28,29]}
+  ];
+  categories.forEach(function(cat){
+    h+='<div class="dgt">'+cat.label+'</div>';
+    cat.ids.forEach(function(i){
+      var term=GLOSS[i];if(!term)return;
+      var tid='gl-'+i;
+      h+='<div class="dc2"><div class="dch" onclick="togDef(this)" data-did="'+tid+'">';
+      h+='<div class="dcd" style="background:var(--accent-m)"></div>';
+      h+='<span class="dcn">'+term.t+'</span>';
+      h+='<span class="dct" id="ddt-'+tid+'">▾</span></div>';
+      h+='<div class="dcb" id="'+tid+'">';
+      h+='<div class="dsl">Definition</div><div class="dtx">'+term.d+'</div>';
+      h+='<div class="dsl">Example</div><div class="dex">'+term.ex+'</div>';
+      h+='<div class="dsl">Beginning correction</div><div class="dtx" style="color:var(--safe)">'+term.cor+'</div>';
+      h+='</div></div>';
+    });
+  });
+  glp.innerHTML=h;
+}
+
+// INIT
+window.addEventListener('DOMContentLoaded',function(){
+  load();
+  rAll();
+  renderRecentUsed();
+  renderDefs('');
+});
+</script>
+</body>
+</html>
