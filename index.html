@@ -275,20 +275,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .cult-opt{font-family:'DM Mono',monospace;font-size:8px;padding:4px 9px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--dim);cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
 .cult-opt.on{background:var(--safe-d);border-color:var(--safe);color:var(--safe)}
 
-  /* BACKLOG MODAL */
-<div class="ql-mo" id="backlog-mo" onclick="if(event.target===this)this.classList.remove('op')">
-  <div class="ql-mc">
-    <h3 style="font-family:'Cormorant Garamond', serif; font-style:italic;">Backlog a Moment</h3>
-    <input type="datetime-local" id="backlog-dt" style="width:100%; padding:8px; margin:8px 0; border-radius:6px; border:1px solid var(--border);">
-    <textarea id="backlog-note" placeholder="Moment details..." style="width:100%; height:80px; padding:8px; border-radius:6px; border:1px solid var(--border);"></textarea>
-    <button class="ql-sub" onclick="saveBacklog()">Add</button>
-    <button class="ql-sub" style="background:var(--border); color:var(--dim);" onclick="closeBacklogModal()">Cancel</button>
-  </div>
-</div>
-  
 /* BACK-LOG DATE BAR */
 .bl-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-  
+
 /* MISC */
 .sect-divider{height:1px;background:var(--border);margin:4px 16px}
 </style>
@@ -408,10 +397,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
     <input class="di" type="date" id="hist-dt" onchange="renderHistory()">
     <button class="dc-btn" onclick="clearHistDates()">Reset</button>
   </div>
- <div class="fhd">
-  <span class="fl" id="hist-fl">0 moments</span>
-  <button class="dc-btn" onclick="genSummary()">+ Summary</button>
-  <button class="dc-btn" onclick="openBacklogModal()">+ Backlog</button>
+  <div class="fhd">
+    <span class="fl" id="hist-fl">0 moments</span>
+    <button class="dc-btn" onclick="genSummary()">+ Summary</button>
+  </div>
+  <div id="hist-feed"></div>
 </div>
 
 <!-- === GLOSSARY TAB === -->
@@ -1582,6 +1572,7 @@ function saveCatNote(el){
 function cmO(e){if(e.target===document.getElementById('mo'))closeM();}
 function closeM(){document.getElementById('mo').classList.remove('op');}
 
+// IDENTIFY TAB
 // LEARN TAB (Definitions)
 function renderDefs(q){
   _defDetail=document.getElementById('def-detail-toggle').checked;
@@ -1796,47 +1787,6 @@ function genSummary(){
   var txt=lines.join('\n');
   state.moments.unshift({id:Date.now(),cid:'summary',cl:'Summary',grp:'attention',gn:'Summary',note:txt,ts:new Date().toISOString(),isSummary:true});
   save();renderHistory();toast('Summary saved to History.');
-}
-
-// Open / close backlog modal
-function openBacklogModal() {
-  document.getElementById('backlog-mo').classList.add('op');
-}
-
-function closeBacklogModal() {
-  document.getElementById('backlog-mo').classList.remove('op');
-}
-
-// Save backlog entry
-function saveBacklog() {
-  const dtInput = document.getElementById('backlog-dt').value;
-  const note = document.getElementById('backlog-note').value.trim();
-  if(!dtInput || !note) {
-    alert('Please fill in date/time and moment details.');
-    return;
-  }
-
-  const entry = {
-    date: new Date(dtInput).toISOString(),
-    text: note,
-    id: 'bl-' + Date.now()
-  };
-
-  // Save in history feed
-  const histFeed = document.getElementById('hist-feed');
-  const div = document.createElement('div');
-  div.className = 'en';
-  div.innerHTML = `<div class="eno">${new Date(entry.date).toLocaleString()}: ${entry.text}</div>`;
-  histFeed.prepend(div);
-
-  // Clear modal
-  document.getElementById('backlog-dt').value = '';
-  document.getElementById('backlog-note').value = '';
-  closeBacklogModal();
-
-  // Optionally update count
-  const countEl = document.getElementById('hist-fl');
-  countEl.textContent = (parseInt(countEl.textContent) + 1) + ' moments';
 }
 
 // EXPORT/IMPORT
