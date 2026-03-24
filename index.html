@@ -44,7 +44,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 /* HEADER */
 .hdr{padding:48px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:100}
-.hdr-left{}
 .hdr-eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
 .hdr-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:300;font-style:italic;color:var(--accent-m);line-height:1}
 .hdr-right{display:flex;align-items:center;gap:8px}
@@ -77,6 +76,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .key-def{font-size:13px;color:var(--text);line-height:1.5}
 .key-def strong{font-weight:500}
 .key-close{width:100%;margin-top:20px;padding:12px;border-radius:8px;border:none;background:var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer}
+.view-opt{display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:border-color .15s,background .15s}
+.view-opt:hover{border-color:var(--accent);background:var(--accent-d)}
+.view-opt.on{border-color:var(--accent-m);background:var(--accent-d);box-shadow:0 0 0 1px var(--accent)}
+.view-opt-t{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.view-opt-d{display:block;font-size:12px;color:var(--muted);line-height:1.45;font-weight:300}
 
 /* LOG TAB */
 .log-welcome{padding:20px 20px 0;margin-bottom:4px}
@@ -170,11 +174,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 /* IDENTIFY TAB */
 
 /* LEARN TAB (formerly Definitions) */
-.def-toggle-bar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.def-toggle-bar,.log-feed-toolbar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .def-toggle-label{font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif}
 .toggle-sw{position:relative;width:36px;height:20px;cursor:pointer}
-.toggle-sw input{opacity:0;width:0;height:0}
-.toggle-sw .slider{position:absolute;inset:0;background:var(--border);border-radius:20px;transition:.2s}
+.toggle-sw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer;z-index:2}
+.toggle-sw .slider{position:absolute;inset:0;z-index:1;background:var(--border);border-radius:20px;transition:.2s}
 .toggle-sw input:checked+.slider{background:var(--accent-m)}
 .toggle-sw .slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
 .toggle-sw input:checked+.slider:before{transform:translateX(16px)}
@@ -235,6 +239,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .cci{display:block;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none;margin-bottom:8px;line-height:1.5}
 .ccs{display:block;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:11px;padding:9px 12px;outline:none;margin-bottom:8px}
 .ccb{width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent-m);color:#fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;margin-bottom:8px}
+.ccw-continue{display:block;width:100%;padding:10px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--accent-m);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-bottom:8px}
+.ccw-continue:hover{border-color:var(--accent-m)}
+.ccw-hint{font-size:11px;color:var(--dim);margin:-2px 0 10px;line-height:1.45;font-weight:300}
+.ccw-opt-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin:10px 0 6px}
 .ccl{padding:8px 16px}
 .cci2{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
 .cin2{font-size:13px;color:var(--text)}
@@ -247,7 +255,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
   min-height:calc(100svh - var(--welcome-hero-offset));
   min-height:calc(100dvh - var(--welcome-hero-offset));
   display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:24px 22px 32px;margin-bottom:4px;box-sizing:border-box;
+  padding:24px 22px 40px;margin-bottom:56px;box-sizing:border-box;
 }
 .welcome-title{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(2.35rem,7vw,3.1rem);font-weight:400;font-style:italic!important;color:var(--accent-m);line-height:1.12;letter-spacing:.015em;text-align:center;margin:0 0 20px}
 .welcome-lede{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;max-width:34em;margin:0 auto;text-align:center}
@@ -256,21 +264,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
   flex:1 1 140px;max-width:185px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;
   background:var(--surface);color:var(--accent-m);font-size:13px;font-weight:500;line-height:1.35;
   font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;
-  cursor:pointer;transition:border-color .15s,background .15s,color .15s;
+  cursor:pointer;transition:border-color .15s,background .15s;
 }
 .welcome-jump-btn:hover{border-color:var(--accent);background:var(--accent-d)}
 .welcome-section-heading{
   font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(1.45rem,4.2vw,2rem);font-weight:400;font-style:italic!important;
-  color:var(--accent-m);line-height:1.2;letter-spacing:.02em;text-align:left;margin:0;padding:8px 22px 12px;
+  color:var(--accent-m);line-height:1.2;letter-spacing:.02em;text-align:left;margin:0;padding:16px 22px 20px;
 }
-.welcome-about{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;text-align:left;padding:0 22px 6px;max-width:40em}
-.welcome-about p{margin:0 0 12px}
-.welcome-about p:last-child{margin-bottom:16px}
-.welcome-instructions{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-left:16px;margin-right:16px}
+.welcome-about{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;text-align:left;padding:0 22px 8px;max-width:40em}
+.welcome-guide>.welcome-about{margin-bottom:36px}
+.welcome-about p{margin:0 0 14px}
+.welcome-about p:last-child{margin-bottom:20px}
+.welcome-instructions{margin:40px 16px 0;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.welcome-instructions .dcd{background:var(--accent-m)}
 .welcome-instructions .dc2:last-child{border-bottom:none}
 .welcome-instructions .welcome-help-btn{margin-top:14px;display:block;width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:var(--accent-d);color:var(--accent-m);font-size:14px;font-weight:500;font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;cursor:pointer;transition:border-color .15s,background .15s}
 .welcome-instructions .welcome-help-btn:hover{border-color:var(--accent);background:var(--surface)}
-.welcome-terms-snap{margin-top:60px;padding-top:40px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 28px,var(--bg) 52px)}
+.welcome-terms-snap{margin-top:100px;padding-top:64px;padding-bottom:24px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 36px,var(--bg) 72px)}
 .welcome-cta-btn{
   margin-top:18px;width:100%;max-width:320px;padding:14px 22px;border:none;border-radius:10px;
   background:var(--accent-m);color:#fff;font-size:15px;font-weight:500;line-height:1.35;
@@ -285,19 +295,20 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 @media (prefers-reduced-motion:no-preference){
   html.welcome-snap{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:100px;scroll-padding-bottom:92px}
   html.welcome-snap .welcome-guide{scroll-snap-align:start;scroll-snap-stop:normal}
-  html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:8px}
+  html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:24px}
 }
 
-/* WELCOME (terms reference, formerly standalone glossary) */
-.gl-wrap{}
+/* Shared card style (Log welcome blurb, etc.) */
 .gl-disc{padding:14px 16px;margin:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.7}
 .gl-disc p{margin:0 0 10px;line-height:1.7}
 .gl-disc p:last-child{margin-bottom:0}
 .gl-disc-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
 .gl-disc h3.gl-disc-title{margin:0 0 8px;font-weight:500;font-style:normal;font-size:9px;letter-spacing:.12em}
-.welcome-guide{padding:32px 0 0}
-.welcome-gloss-grp{margin-bottom:6px}
-.welcome-gloss-grp:last-child{margin-bottom:0}
+.welcome-guide{padding:48px 0 72px}
+.welcome-terms-snap>.sect-divider{margin-top:28px!important;margin-bottom:20px!important}
+.welcome-gloss-grp{margin-bottom:20px}
+.welcome-gloss-grp:last-child{margin-bottom:8px}
+#welcome-panel .dcd{background:var(--accent-m)}
 
 /* MODAL */
 .mo{display:none;position:fixed;inset:0;background:rgba(47,42,36,.35);z-index:300;overflow-y:auto;padding:20px 16px 40px;-webkit-overflow-scrolling:touch}
@@ -319,7 +330,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .ql-list{margin-bottom:12px}
 .ql-gl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 0 4px}
 .ql-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid transparent;background:var(--card);cursor:pointer;width:100%;text-align:left;margin-bottom:4px;transition:all .12s}
-.ql-btn.on{}
 .ql-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .ql-btn-name{font-size:12px;color:var(--text)}
 .ql-note{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 12px;outline:none;resize:none;height:70px;line-height:1.5;margin-bottom:10px}
@@ -350,21 +360,20 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
     <div class="hdr-name">You're safe here.</div>
   </div>
   <div class="hdr-right">
-    <button class="key-btn" onclick="openKey()">🔑 Key</button>
+    <button type="button" class="key-btn" onclick="openViewPicker()">Your view</button>
   </div>
 </div>
 
-<!-- KEY OVERLAY -->
-<div class="key-overlay" id="key-overlay" onclick="keyOvClick(event)">
+<!-- YOUR VIEW (plain language; replaces role abbreviations in behavior text) -->
+<div class="key-overlay" id="view-overlay" onclick="viewOvClick(event)">
   <div class="key-panel">
-    <div class="key-title">Role key</div>
-    <div class="key-sub">These abbreviations appear throughout the app in place of names and gendered terms.</div>
-    <div class="key-row"><span class="key-code">PR</span><div class="key-def"><strong>PR</strong> — the narcissist. The person whose patterns are being tracked.</div></div>
-    <div class="key-row"><span class="key-code">T</span><div class="key-def"><strong>T</strong> — the target. The person on the receiving end of the behavior.</div></div>
-    <div class="key-row"><span class="key-code">CH</span><div class="key-def"><strong>CH</strong> — adult child. PR's adult child.</div></div>
-    <div class="key-row"><span class="key-code">CP</span><div class="key-def"><strong>CP</strong> — adult child's partner. CH's partner.</div></div>
-    <div class="key-row"><span class="key-code">PT</span><div class="key-def"><strong>PT</strong> — narcissist's partner. PR's partner.</div></div>
-    <button class="key-close" onclick="closeKey()">Close</button>
+    <div class="key-title">Your view shapes the language</div>
+    <div class="key-sub">Behavior descriptions use plain words instead of codes. Pick the situation closest to yours; you can change this anytime.</div>
+    <div class="view-opt" data-view="partner" onclick="selectUserView('partner')"><span class="view-opt-t">Partner of this person</span><span class="view-opt-d">You’re partnered with the person whose patterns you’re tracking.</span></div>
+    <div class="view-opt" data-view="child" onclick="selectUserView('child')"><span class="view-opt-t">Their adult child</span><span class="view-opt-d">You’re the grown child in the dynamic.</span></div>
+    <div class="view-opt" data-view="acpartner" onclick="selectUserView('acpartner')"><span class="view-opt-t">Partner of their adult child</span><span class="view-opt-d">You’re partnered with their adult child (e.g. in-law context).</span></div>
+    <div class="view-opt" data-view="neutral" onclick="selectUserView('neutral')"><span class="view-opt-t">I’m learning / other</span><span class="view-opt-d">Neutral wording (therapist, friend, or exploring without a fixed role).</span></div>
+    <button class="key-close" onclick="closeViewPicker()">Done</button>
   </div>
 </div>
 
@@ -422,7 +431,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
   <div class="sect-divider"></div>
 
-  <div class="fhd">
+  <div class="log-feed-toolbar">
+    <label class="toggle-sw"><input type="checkbox" id="show-recent-moments" checked onchange="onToggleShowRecentMoments()"><span class="slider"></span></label>
+    <span class="def-toggle-label">Show recent moments</span>
+  </div>
+
+  <div class="fhd" id="recent-moments-hdr">
     <span class="fl">Recent moments</span>
     <span class="fc" id="tc">0</span>
   </div>
@@ -433,7 +447,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 <div class="pg" id="pg-def">
   <div class="dsr-prominent"><input class="dsi-prominent" id="def-search" placeholder="Search behaviors..." oninput="fd(this.value)" autocomplete="off"></div>
   <div class="def-toggle-bar">
-    <label class="toggle-sw"><input type="checkbox" id="def-detail-toggle" onchange="renderDefs('')"><span class="slider"></span></label>
+    <label class="toggle-sw"><input type="checkbox" id="def-detail-toggle" onchange="renderLearnDefs()"><span class="slider"></span></label>
     <span class="def-toggle-label">Show detailed view</span>
   </div>
   <div id="defc"></div>
@@ -488,77 +502,77 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
       <p>This app is here to help you notice what's happening, slow down, and choose responses that fit your values when someone with narcissistic patterns is part of your life. Nothing here replaces therapy or safety planning; it's a private place to track what you observe and how you want to move.</p>
     </div>
     <div class="welcome-instructions">
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-key">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">The key</span>
-        <span class="dct" id="ddt-welcome-key">▾</span>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-key">
+          <div class="dcd"></div>
+          <span class="dcn">Your view</span>
+          <span class="dct" id="ddt-welcome-key">▾</span>
+        </div>
+        <div class="dcb" id="welcome-key">
+          <div class="dtx">Tap <strong>Your view</strong> in the header and pick the situation that fits you best. Behavior descriptions use plain language for your role (e.g. “your parent,” “your partner”) so you do not need to memorize abbreviations. You can change this anytime.</div>
+        </div>
       </div>
-      <div class="dcb" id="welcome-key">
-        <div class="dtx">Tap <strong>Key</strong> in the header for PR, T, CH, CP, and PT—short roles used instead of names so examples stay clear. If a letter appears in a description, that's who the text is about.</div>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-log">
+          <div class="dcd"></div>
+          <span class="dcn">Log</span>
+          <span class="dct" id="ddt-welcome-log">▾</span>
+        </div>
+        <div class="dcb" id="welcome-log">
+          <div class="dtx">Use <strong>Log</strong> when something stands out. Add a short note if you want, set date and time, and choose the behavior that fits best—you're not grading yourself. Use <strong>Culturally influenced / ambiguous</strong> when background or intent might change how the moment reads. <strong>Save moment</strong> stores it. You can show or hide the <strong>Recent moments</strong> list under the form if you prefer less on screen. Logging still builds a factual, dated picture you can revisit in <strong>History</strong> without reliving everything at once. If a label you need isn’t on the <strong>Log</strong> tab, open <strong>Learn</strong>, find that behavior in the same category, and use <strong>Add to Log</strong> (or <strong>Restore to Log</strong> if you’d removed it from the shortcut list).</div>
+        </div>
       </div>
-    </div>
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-log">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">Log</span>
-        <span class="dct" id="ddt-welcome-log">▾</span>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-history">
+          <div class="dcd"></div>
+          <span class="dcn">History</span>
+          <span class="dct" id="ddt-welcome-history">▾</span>
+        </div>
+        <div class="dcb" id="welcome-history">
+          <div class="dtx">Use <strong>History</strong> to search, filter by cultural flag, pick a from/to range, or add a summary when you want a wider picture. Good for noticing repeats and pacing yourself before you respond or set boundaries.</div>
+        </div>
       </div>
-      <div class="dcb" id="welcome-log">
-        <div class="dtx">Use <strong>Log</strong> when something stands out. Add a short note if you want, set date and time, and choose the behavior that fits best—you're not grading yourself. Use <strong>Culturally influenced / ambiguous</strong> when background or intent might change how the moment reads. <strong>Save moment</strong> stores it; <strong>Recent moments</strong> shows what you logged last. Logging builds a factual, dated picture you can revisit without reliving everything at once.</div>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-learn">
+          <div class="dcd"></div>
+          <span class="dcn">Learn</span>
+          <span class="dct" id="ddt-welcome-learn">▾</span>
+        </div>
+        <div class="dcb" id="welcome-learn">
+          <div class="dtx">Use <strong>Learn</strong> to read fuller descriptions, examples, and optional reminders about responses. Treat it as support for your clarity, not a script you must follow. When a behavior isn’t already on your <strong>Log</strong> shortcut list, open its entry here and use <strong>＋ Add to Log</strong> (or <strong>＋ Restore to Log</strong> when it applies).</div>
+        </div>
       </div>
-    </div>
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-history">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">History</span>
-        <span class="dct" id="ddt-welcome-history">▾</span>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-insights">
+          <div class="dcd"></div>
+          <span class="dcn">Insights</span>
+          <span class="dct" id="ddt-welcome-insights">▾</span>
+        </div>
+        <div class="dcb" id="welcome-insights">
+          <div class="dtx"><strong>Insights</strong> summarizes how often patterns show up and lets you export or import data. Use <strong>Add custom behavior</strong> there if your situation needs a label that isn’t in the default list.</div>
+        </div>
       </div>
-      <div class="dcb" id="welcome-history">
-        <div class="dtx">Use <strong>History</strong> to search, filter by cultural flag, pick a from/to range, or add a summary when you want a wider picture. Good for noticing repeats and pacing yourself before you respond or set boundaries.</div>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-responses">
+          <div class="dcd"></div>
+          <span class="dcn">When your responses change</span>
+          <span class="dct" id="ddt-welcome-responses">▾</span>
+        </div>
+        <div class="dcb" id="welcome-responses">
+          <div class="dtx">When you set boundaries or act differently, a narcissistic parent or partner may push back with anger, guilt, or manipulation. This is normal and not your fault. You may feel conflicted, but over time, consistent self-care and reflection help you reclaim your emotional space. Journaling, support from trusted people, and self-compassion can make this process safer and empowering.</div>
+        </div>
       </div>
-    </div>
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-learn">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">Learn</span>
-        <span class="dct" id="ddt-welcome-learn">▾</span>
+      <div class="dc2">
+        <div class="dch" onclick="togDef(this)" data-did="welcome-helpful">
+          <div class="dcd"></div>
+          <span class="dcn">Helpful terms</span>
+          <span class="dct" id="ddt-welcome-helpful">▾</span>
+        </div>
+        <div class="dcb" id="welcome-helpful">
+          <div class="dtx">Short explanations of trauma- and family-system language used in this app live in <strong>Understanding the language</strong> below.</div>
+          <button type="button" class="welcome-help-btn" onclick="scrollWelcomeTo('welcome-glossary')">Understanding the language</button>
+        </div>
       </div>
-      <div class="dcb" id="welcome-learn">
-        <div class="dtx">Use <strong>Learn</strong> to read fuller descriptions, examples, and optional reminders about responses. Treat it as support for your clarity, not a script you must follow.</div>
-      </div>
-    </div>
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-insights">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">Insights</span>
-        <span class="dct" id="ddt-welcome-insights">▾</span>
-      </div>
-      <div class="dcb" id="welcome-insights">
-        <div class="dtx"><strong>Insights</strong> summarizes how often patterns show up and lets you export or import data. <strong>Custom categories</strong> are there if your situation needs labels that aren't in the default list.</div>
-      </div>
-    </div>
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-responses">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">When your responses change</span>
-        <span class="dct" id="ddt-welcome-responses">▾</span>
-      </div>
-      <div class="dcb" id="welcome-responses">
-        <div class="dtx">When you set boundaries or act differently, a narcissistic parent or partner may push back with anger, guilt, or manipulation. This is normal and not your fault. You may feel conflicted, but over time, consistent self-care and reflection help you reclaim your emotional space. Journaling, support from trusted people, and self-compassion can make this process safer and empowering.</div>
-      </div>
-    </div>
-    <div class="dc2">
-      <div class="dch" onclick="togDef(this)" data-did="welcome-helpful">
-        <div class="dcd" style="background:var(--accent-m)"></div>
-        <span class="dcn">Helpful terms</span>
-        <span class="dct" id="ddt-welcome-helpful">▾</span>
-      </div>
-      <div class="dcb" id="welcome-helpful">
-        <div class="dtx">Short explanations of trauma- and family-system language used in this app live in <strong>Understanding the language</strong> below.</div>
-        <button type="button" class="welcome-help-btn" onclick="scrollWelcomeTo('welcome-glossary')">Understanding the language</button>
-      </div>
-    </div>
     </div>
   </div>
   <div class="welcome-terms-snap" id="welcome-glossary">
@@ -610,12 +624,12 @@ var GCD={1:'var(--g1d)',2:'var(--g2d)',3:'var(--g3d)',4:'var(--g4d)',5:'var(--g5
 var GCM={1:'var(--g1m)',2:'var(--g2m)',3:'var(--g3m)',4:'var(--g4m)',5:'var(--g5m)',6:'var(--g6m)',7:'var(--g7m)',8:'var(--g8m)'};
 function gColor(gid){var g=GROUPS.find(function(x){return x.id===gid;});return g?g.c:1;}
 
-// Core behaviors shown by default in Log tab (8 per group)
+// Core behaviors shown by default in Log tab (5 per group); rest via Learn → Add to Log
 var CORE_CATS={
-  attention:['att-rec','con-int','cvt-sur','escl-conf','feign-con','home-dir','non-apo','uns-adv'],
-  narrative:['acc-min','bck-hnd','crd-red','cur-nar','exc-app','exp-own','nar-rev','nvb-edi'],
-  rejection:['bod-sur','perf-inq','ref-rec','sel-ret','str-omi','wrm-dis','wgt-sil','wthld-ack'],
-  relationship:['hm-car','they-def','they-dec','opn-dis','hm-rol','they-sen','soc-iso','they-spk']
+  attention:['att-rec','con-int','cvt-sur','escl-conf','feign-con'],
+  narrative:['acc-min','bck-hnd','crd-red','cur-nar','exc-app'],
+  rejection:['bod-sur','perf-inq','ref-rec','sel-ret','str-omi'],
+  relationship:['hm-car','they-def','they-dec','opn-dis','hm-rol']
 };
 function isCore(cid){return Object.values(CORE_CATS).some(function(arr){return arr.indexOf(cid)!==-1;});}
 function isAdded(cid){return state.addedCats.indexOf(cid)!==-1;}
@@ -1406,12 +1420,181 @@ GROUPS.forEach(function(g){SEC_OPEN[g.id]=false;}); // all collapsed by default
 var DEF_SEC_OPEN={};
 GROUPS.forEach(function(g){DEF_SEC_OPEN[g.id]=false;}); // Learn tab groups collapsed by default
 var WELCOME_GLOSS_OPEN={}; // Welcome glossary section accordions (wg0…), all collapsed until opened
-var _qlSel=null;
-var _blSel=[];
 var _cultFilter='all';
 var _defDetail=false;
+var showRecentMoments=true;
+var _ccWizardStep=1;
+var _ccWizardSel='';
+var _ccWizardName='';
+var _lastNavTab='welcome';
 
 var state={sel:[],q:'',df:'',dt:'',editing:null,moments:[],custom:[],catNotes:{},addedCats:[],hiddenCore:[]};
+
+function loadShowRecentMomentsPref(){
+  try{
+    var v=localStorage.getItem('pj1sr');
+    if(v==='0')showRecentMoments=false;
+    else if(v==='1')showRecentMoments=true;
+  }catch(e){}
+}
+function persistShowRecentMomentsPref(){
+  try{localStorage.setItem('pj1sr',showRecentMoments?'1':'0');}catch(e){}
+}
+function updateRecentMomentsSectionVisibility(){
+  var on=showRecentMoments;
+  var hdr=document.getElementById('recent-moments-hdr');
+  var fd=document.getElementById('feed');
+  if(hdr)hdr.style.display=on?'':'none';
+  if(fd)fd.style.display=on?'':'none';
+}
+function syncShowRecentMomentsUI(){
+  var cb=document.getElementById('show-recent-moments');
+  if(cb)cb.checked=showRecentMoments;
+  updateRecentMomentsSectionVisibility();
+}
+function onToggleShowRecentMoments(){
+  var cb=document.getElementById('show-recent-moments');
+  showRecentMoments=cb?!!cb.checked:true;
+  persistShowRecentMomentsPref();
+  updateRecentMomentsSectionVisibility();
+}
+
+// Reader view: w/ex/foldNote → SHARED_PLAIN; int/sc/correction → map for selected view (+ optional int_partner etc.).
+var TOKEN_KEYS_ORDER=["PR's","PT's","CH's","CP's",'PR','PT','CH','CP'];
+var VIEW_USES_SHARED_PLAIN={w:1,ex:1,foldNote:1};
+var SHARED_PLAIN={
+  "PR's":"this person's",
+  "PT's":"their partner's",
+  "CH's":"their adult child's",
+  "CP's":"their child's partner's",
+  "PR":"this person",
+  "PT":"their partner",
+  "CH":"their adult child",
+  "CP":"their child's partner",
+  _T:"the person most affected"
+};
+var VIEW_TOKEN_MAP={
+  neutral:SHARED_PLAIN,
+  partner:{
+    "PR's":"your partner's",
+    "PT's":"your",
+    "CH's":"your partner's child's",
+    "CP's":"your partner's child's partner's",
+    "PR":"your partner",
+    "PT":"you",
+    "CH":"your partner's child",
+    "CP":"your partner's child's partner",
+    _T:"you"
+  },
+  child:{
+    "PR's":"your parent's",
+    "PT's":"your parent's partner's",
+    "CH's":"your",
+    "CP's":"your partner's",
+    "PR":"your parent",
+    "PT":"your parent's partner",
+    "CH":"you",
+    "CP":"your partner",
+    _T:"you"
+  },
+  acpartner:{
+    "PR's":"your partner's parent's",
+    "PT's":"your partner's other parent's",
+    "CH's":"your partner's",
+    "CP's":"your",
+    "PR":"your partner's parent",
+    "PT":"your partner's other parent",
+    "CH":"your partner",
+    "CP":"you",
+    _T:"your partner"
+  }
+};
+var userView='neutral';
+
+function isReaderView(v){return v&&Object.prototype.hasOwnProperty.call(VIEW_TOKEN_MAP,v);}
+function readerViewKey(){
+  var v=userView||'neutral';
+  return isReaderView(v)?v:'neutral';
+}
+function viewOverlay(){
+  return document.getElementById('view-overlay');
+}
+function loadUserView(){
+  try{
+    var v=localStorage.getItem('pj1view');
+    userView=isReaderView(v)?v:'neutral';
+  }catch(e){userView='neutral';}
+}
+function applyTokenMap(str,map){
+  if(str==null||str==='')return '';
+  var s=String(str);
+  TOKEN_KEYS_ORDER.forEach(function(k){if(map[k]!=null)s=s.split(k).join(map[k]);});
+  if(map._T)s=s.replace(/\bT\b/g,map._T);
+  return s;
+}
+function viewMapForField(field){
+  if(VIEW_USES_SHARED_PLAIN[field])return SHARED_PLAIN;
+  return VIEW_TOKEN_MAP[readerViewKey()]||SHARED_PLAIN;
+}
+function catFieldOverride(cat,field){
+  var o=cat[field+'_'+readerViewKey()];
+  if(o!=null&&String(o).length)return o;
+  return null;
+}
+function catViewField(cat,field){
+  var ovr=catFieldOverride(cat,field);
+  if(ovr!==null)return ovr;
+  var base=cat[field];
+  if(base==null||base==='')return '';
+  return applyTokenMap(String(base),viewMapForField(field));
+}
+function catViewScList(cat){
+  var ovr=cat['sc_'+readerViewKey()];
+  if(ovr&&ovr.length)return ovr;
+  if(!cat.sc||!cat.sc.length)return [];
+  var map=viewMapForField('sc');
+  return cat.sc.map(function(line){return applyTokenMap(String(line),map);});
+}
+function catViewCorrection(cat){
+  var ovr=catFieldOverride(cat,'correction');
+  if(ovr!==null)return ovr;
+  if(!cat.correction)return '';
+  return applyTokenMap(String(cat.correction),viewMapForField('correction'));
+}
+function syncViewPickerHighlight(){
+  var vk=readerViewKey();
+  document.querySelectorAll('#view-overlay .view-opt').forEach(function(el){
+    el.classList.toggle('on',el.getAttribute('data-view')===vk);
+  });
+}
+function applyUserViewChange(){
+  rAll();
+  syncViewPickerHighlight();
+  var pgDef=document.getElementById('pg-def');
+  if(pgDef&&pgDef.classList.contains('on')){
+    var dq=document.getElementById('def-search');
+    renderDefs(dq?dq.value:'');
+  }
+  var pgWel=document.getElementById('pg-welcome');
+  if(pgWel&&pgWel.classList.contains('on'))renderWelcome();
+}
+function selectUserView(v){
+  if(!isReaderView(v))return;
+  userView=v;
+  try{localStorage.setItem('pj1view',v);}catch(e){}
+  closeViewPicker();
+  applyUserViewChange();
+}
+function openViewPicker(){
+  syncViewPickerHighlight();
+  var ov=viewOverlay();
+  if(ov)ov.classList.add('on');
+}
+function closeViewPicker(){
+  var ov=viewOverlay();
+  if(ov)ov.classList.remove('on');
+}
+function viewOvClick(e){if(e.target===viewOverlay())closeViewPicker();}
 
 function save(){
   try{
@@ -1435,47 +1618,41 @@ function allCats(){return CATS.concat(state.custom);}
 function gc(n){return GC[n]||GC[1];}
 function gcd(n){return GCD[n]||GCD[1];}
 function gcm(n){return GCM[n]||GCM[1];}
-function gColor(gid){var g=GROUPS.find(function(x){return x.id===gid;});return g?g.c:1;}
 
 function scrollWelcomeTo(id){
-  var el=document.getElementById(id);if(!el)return;
+  var el=document.getElementById(id);
+  if(!el)return;
   var smooth=true;
-  try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)smooth=false;}catch(e){}
+  try{
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)smooth=false;
+  }catch(e){}
   el.scrollIntoView({behavior:smooth?'smooth':'auto',block:'start'});
 }
 
 // Navigation
 function sw(p){
+  var prevTab=_lastNavTab;
+  _lastNavTab=p;
   document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('on');});
   document.querySelectorAll('.nbt').forEach(function(x){x.classList.remove('on');});
   var pg=document.getElementById('pg-'+p);var nb=document.getElementById('nb-'+p);
   if(pg)pg.classList.add('on');if(nb)nb.classList.add('on');
   document.documentElement.classList.toggle('welcome-snap',p==='welcome');
-  if(p==='st')renderStats();
-  if(p==='def'){_defDetail=document.getElementById('def-detail-toggle').checked;renderDefs('');}
+  if(p==='st'){
+    if(prevTab!=='st')resetCCWizard();
+    renderStats();
+  }
+  if(p==='def')renderLearnDefs();
   if(p==='hist')renderHistory();
   if(p==='welcome')renderWelcome();
   window.scrollTo(0,0);
 }
 
-// Key overlay
-function openKey(){document.getElementById('key-overlay').classList.add('on');}
-function closeKey(){document.getElementById('key-overlay').classList.remove('on');}
-function keyOvClick(e){if(e.target===document.getElementById('key-overlay'))closeKey();}
-
-// Cultural checkbox show/hide note
-document.addEventListener('DOMContentLoaded',function(){
-  var cc=document.getElementById('cult-check');
-  if(cc)cc.addEventListener('change',function(){
-    var n=document.getElementById('cult-note');
-    if(n)n.style.display=this.checked?'block':'none';
-  });
-});
-
 // Categories toggle
 function toggleCats(){
   var sec=document.getElementById('cats-section');
   var btn=document.getElementById('show-cats-btn');
+  if(!sec||!btn)return;
   var open=sec.classList.contains('open');
   sec.classList.toggle('open',!open);
   btn.classList.toggle('open',!open);
@@ -1673,7 +1850,11 @@ function logIt(){
   save();rAll();renderRecentUsed();
   var msgs=['Got it. Take a breath.','Saved. You noticed.','Logged. You\u2019re allowed to trust what you noticed.','Saved. Take your time.'];
   toast(msgs[Math.floor(Math.random()*msgs.length)]);
-  setTimeout(function(){var feed=document.getElementById('feed');if(feed)feed.scrollIntoView({behavior:'smooth',block:'start'});},150);
+  setTimeout(function(){
+    if(!showRecentMoments)return;
+    var feed=document.getElementById('feed');
+    if(feed)feed.scrollIntoView({behavior:'smooth',block:'start'});
+  },150);
 }
 
 // Feed render (log tab - recent)
@@ -1723,11 +1904,12 @@ function saveEdit(el){
 }
 
 // History
-var _cultFilter='all';
 function setCultFilter(f){
   _cultFilter=f;
-  document.getElementById('cf-all').classList.toggle('on',f==='all');
-  document.getElementById('cf-cult').classList.toggle('on',f==='cult');
+  var bAll=document.getElementById('cf-all');
+  var bCult=document.getElementById('cf-cult');
+  if(bAll)bAll.classList.toggle('on',f==='all');
+  if(bCult)bCult.classList.toggle('on',f==='cult');
   renderHistory();
 }
 function renderHistory(){
@@ -1763,11 +1945,12 @@ function infoModal(e,el){
   var savedNote=state.catNotes[catId]||'';
   var h='<div class="mt" style="color:'+gc(col)+'">'+cat.l+'</div>';
   h+='<div class="mg">'+(g?g.name:'')+'</div>';
-  h+='<div class="msl">What this behavior is</div><div class="mtx">'+(cat.w||'')+'</div>';
-  if(cat.ex){h+='<div class="msl">Example</div><div class="mex">'+cat.ex+'</div>';}
-  if(cat.foldNote){h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:6px 10px;background:var(--card);border-radius:4px">'+cat.foldNote+'</div>';}
-  h+='<div class="msl">Internal reminder</div><div class="mtx">'+(cat.int||'')+'</div>';
-  if(cat.sc&&cat.sc.length){h+='<div class="msl">How to respond</div>';cat.sc.forEach(function(s){h+='<div class="msc">'+s+'</div>';});}
+  h+='<div class="msl">What this behavior is</div><div class="mtx">'+catViewField(cat,'w')+'</div>';
+  if(cat.ex){h+='<div class="msl">Example</div><div class="mex">'+catViewField(cat,'ex')+'</div>';}
+  if(cat.foldNote){h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:6px 10px;background:var(--card);border-radius:4px">'+catViewField(cat,'foldNote')+'</div>';}
+  h+='<div class="msl">Internal reminder</div><div class="mtx">'+catViewField(cat,'int')+'</div>';
+  var vsc=catViewScList(cat);
+  if(vsc.length){h+='<div class="msl">How to respond</div>';vsc.forEach(function(s){h+='<div class="msc">'+s+'</div>';});}
   h+='<div class="msl">Your notes</div><div class="cat-note-area">';
   h+='<textarea class="cat-note-ta" id="cat-note-ta" placeholder="Add your own notes about this pattern...">'+savedNote+'</textarea>';
   h+='<button class="cat-note-btn" onclick="saveCatNote(this)" data-cid="'+catId+'">Save note</button></div>';
@@ -1785,8 +1968,13 @@ function closeM(){document.getElementById('mo').classList.remove('op');}
 
 // IDENTIFY TAB
 // LEARN TAB (Definitions)
+function renderLearnDefs(){
+  var i=document.getElementById('def-search');
+  renderDefs(i&&i.value!=null?i.value:'');
+}
 function renderDefs(q){
-  _defDetail=document.getElementById('def-detail-toggle').checked;
+  var dt=document.getElementById('def-detail-toggle');
+  _defDetail=dt?!!dt.checked:false;
   var ql=(q||'').toLowerCase();var h='';
 
   h+='<div class="def-disc"><div class="def-disc-title">About these definitions</div>These are for pattern recognition and personal clarity — not diagnosis. What you can change is your own response, your boundaries, and the degree to which the behavior has access to you. That is not a consolation. That is where the power is.</div>';
@@ -1812,11 +2000,12 @@ function renderDefs(q){
     {t:'Covert retaliation',d:'Rather than open conflict: subtle punishment, increased coldness, strategic exclusion, quiet undermining. The retaliation is deniable.',w:'Do not chase the warmth back. Stay even. Log the retaliation pattern over time.'},
     {t:'Hoovering',d:'After conflict or distance the PR attempts to pull the target back in with warmth or gestures — enough to restore access without actual change.',w:'Hoovering is not repair. It is restoration of access. Watch behavior over time, not over a single warm interaction.'}
   ];
+  var vmap=VIEW_TOKEN_MAP[readerViewKey()]||SHARED_PLAIN;
   resist.forEach(function(r){
     h+='<div style="margin-bottom:12px;padding:12px;background:var(--card);border-radius:8px;border-left:3px solid var(--g2)">';
     h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--accent-m);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px">'+r.t+'</div>';
-    h+='<div class="dtx" style="margin-bottom:5px">'+r.d+'</div>';
-    if(_defDetail)h+='<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em"><span style="color:var(--safe)">What to expect: </span>'+r.w+'</div>';
+    h+='<div class="dtx" style="margin-bottom:5px">'+applyTokenMap(r.d,vmap)+'</div>';
+    if(_defDetail)h+='<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em"><span style="color:var(--safe)">What to expect: </span>'+applyTokenMap(r.w,vmap)+'</div>';
     h+='</div>';
   });
   h+='</div></div>';
@@ -1842,15 +2031,16 @@ function renderDefs(q){
       h+='<span class="dcn">'+cat.l+(savedNote?' ✦':'')+'</span>';
       h+='<span class="dct" id="ddt-'+cat.id+'">▾</span></div>';
       h+='<div class="dcb" id="def-'+cat.id+'">';
-      h+='<div class="dtx">'+(cat.w||'')+'</div>';
+      h+='<div class="dtx">'+catViewField(cat,'w')+'</div>';
       if(_defDetail){
-        if(cat.ex){h+='<div class="dsl">Example</div><div class="dex">'+cat.ex+'</div>';}
-        if(cat.foldNote){h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:6px 10px;background:var(--card);border-radius:4px">'+cat.foldNote+'</div>';}
-        h+='<div class="dsl">Internal reminder</div><div class="dtx">'+(cat.int||'')+'</div>';
-        if(cat.sc&&cat.sc.length){h+='<div class="dsl">Response scripts</div>';cat.sc.forEach(function(s){h+='<div class="dsc">'+s+'</div>';});}
+        if(cat.ex){h+='<div class="dsl">Example</div><div class="dex">'+catViewField(cat,'ex')+'</div>';}
+        if(cat.foldNote){h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:6px 10px;background:var(--card);border-radius:4px">'+catViewField(cat,'foldNote')+'</div>';}
+        h+='<div class="dsl">Internal reminder</div><div class="dtx">'+catViewField(cat,'int')+'</div>';
+        var rsc=catViewScList(cat);
+        if(rsc.length){h+='<div class="dsl">Response scripts</div>';rsc.forEach(function(s){h+='<div class="dsc">'+s+'</div>';});}
         h+='<button class="deeper-btn" onclick="togDeeper(this)">Go deeper</button>';
         h+='<div class="deeper-block" id="deep-'+cat.id+'">';
-        h+='<div class="dsl">Beginning correction</div><div class="dtx" style="color:var(--safe)">'+(cat.correction||'')+'</div>';
+        h+='<div class="dsl">Beginning correction</div><div class="dtx" style="color:var(--safe)">'+catViewCorrection(cat)+'</div>';
         h+='</div>';
         h+='<div class="cat-note-area">';
         h+='<textarea class="cat-note-ta" id="dn-'+cat.id+'" placeholder="Your notes...">'+savedNote+'</textarea>';
@@ -1883,23 +2073,21 @@ function togDeeper(btn){
   block.classList.toggle('op',!op);
   btn.textContent=op?'Go deeper':'Less';
 }
+function toggleAccordionSection(openMap,key,bodyId,headerEl){
+  openMap[key]=openMap[key]===true?false:true;
+  var body=document.getElementById(bodyId);
+  var arrow=headerEl.querySelector('.def-group-arrow');
+  var open=openMap[key];
+  if(body)body.style.maxHeight=open?'9999px':'0';
+  if(arrow)arrow.classList.toggle('op',open);
+}
 function togDefSec(el){
   var gid=el.getAttribute('data-gid');
-  DEF_SEC_OPEN[gid]=DEF_SEC_OPEN[gid]===true?false:true;
-  var body=document.getElementById('defg-'+gid);
-  var arrow=el.querySelector('.def-group-arrow');
-  var op=DEF_SEC_OPEN[gid];
-  if(body){body.style.maxHeight=op?'9999px':'0';}
-  if(arrow){arrow.classList.toggle('op',op);}
+  toggleAccordionSection(DEF_SEC_OPEN,gid,'defg-'+gid,el);
 }
 function togWelcomeGloss(el){
   var gid=el.getAttribute('data-wgid');
-  WELCOME_GLOSS_OPEN[gid]=WELCOME_GLOSS_OPEN[gid]===true?false:true;
-  var body=document.getElementById('wgb-'+gid);
-  var arrow=el.querySelector('.def-group-arrow');
-  var op=WELCOME_GLOSS_OPEN[gid];
-  if(body){body.style.maxHeight=op?'9999px':'0';}
-  if(arrow){arrow.classList.toggle('op',op);}
+  toggleAccordionSection(WELCOME_GLOSS_OPEN,gid,'wgb-'+gid,el);
 }
 function fd(q){renderDefs(q);}
 
@@ -1910,7 +2098,82 @@ function saveCatNote2(el){
   renderDefs(document.getElementById('def-search')?document.getElementById('def-search').value:'');
 }
 
-// INSIGHTS / STATS
+// INSIGHTS / STATS — add custom behavior (stepped)
+function escAttr(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+function resetCCWizard(){
+  _ccWizardStep=1;
+  _ccWizardSel='';
+  _ccWizardName='';
+}
+function ccWizardApplyFromStep(){
+  var w2=document.getElementById('ccw-wrap2');
+  var w3=document.getElementById('ccw-wrap3');
+  var g=document.getElementById('ccg');
+  var n1=document.getElementById('ccw-next1');
+  var n2=document.getElementById('ccw-next2');
+  if(w2)w2.style.display=_ccWizardStep>=2?'block':'none';
+  if(w3)w3.style.display=_ccWizardStep>=3?'block':'none';
+  if(g)g.disabled=_ccWizardStep>=2;
+  if(n1)n1.style.display=_ccWizardStep===1?'block':'none';
+  if(n2)n2.style.display=_ccWizardStep===2?'block':'none';
+}
+function ccWizardNext(){
+  if(_ccWizardStep===1){
+    var g=document.getElementById('ccg');
+    if(!g||!g.value){toast('Select a category first.');return;}
+    _ccWizardSel=g.value;
+    _ccWizardName='';
+    _ccWizardStep=2;
+    renderStatsCustomSectionOnly();
+    return;
+  }
+  if(_ccWizardStep===2){
+    var n=document.getElementById('ccn');
+    if(!n||!n.value.trim()){toast('Enter a name for this behavior.');return;}
+    _ccWizardName=n.value.trim();
+    _ccWizardStep=3;
+    renderStatsCustomSectionOnly();
+  }
+}
+function buildStatsCustomSectionHTML(){
+  var h='<div class="stl">Add custom behavior</div><div class="ccf">';
+  h+='<div id="ccw-wrap1">';
+  h+='<div class="ccw-hint">Step 1 — choose which group this belongs in.</div>';
+  h+='<select class="ccs" id="ccg" title="Category"><option value="" disabled'+(_ccWizardStep===1&&!_ccWizardSel?' selected':'')+'>Select category</option>';
+  h+=GROUPS.map(function(gr){
+    return '<option value="'+gr.id+'"'+(_ccWizardSel===gr.id?' selected':'')+'>'+gr.name+'</option>';
+  }).join('');
+  h+='</select>';
+  h+='<button type="button" class="ccw-continue" id="ccw-next1" onclick="ccWizardNext()">Continue</button></div>';
+  h+='<div id="ccw-wrap2" style="display:none">';
+  h+='<div class="ccw-hint">Step 2 — what do you want to call this behavior?</div>';
+  h+='<input class="cci" id="ccn" placeholder="Name this behavior" autocomplete="off" value="'+escAttr(_ccWizardName)+'" onkeydown="if(event.key===\'Enter\'){event.preventDefault();ccWizardNext();}">';
+  h+='<button type="button" class="ccw-continue" id="ccw-next2" onclick="ccWizardNext()">Continue</button></div>';
+  h+='<div id="ccw-wrap3" style="display:none">';
+  h+='<div class="ccw-opt-label">Optional details</div>';
+  h+='<div class="ccw-hint">Add any of these now, or leave them blank. You can always keep it minimal.</div>';
+  h+='<textarea class="cci" id="ccw" placeholder="What this behavior is (optional)" style="height:56px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="ccex" placeholder="Example (optional)" style="height:48px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="ccint" placeholder="Internal reminder (optional)" style="height:48px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="ccsc" placeholder="How to respond (optional)" style="height:48px;resize:vertical"></textarea>';
+  h+='<textarea class="cci" id="cccor" placeholder="Beginning correction (optional)" style="height:48px;resize:vertical"></textarea>';
+  h+='<button type="button" class="ccb" onclick="addCC()">Add custom behavior</button></div></div>';
+  if(state.custom.length){
+    h+='<div class="stl">Your custom behaviors</div><div class="ccl">';
+    state.custom.forEach(function(c){h+='<div class="cci2"><span class="cin2">'+c.l+'</span><button class="cdl" onclick="delCC(this)" data-cid="'+c.id+'">✕</button></div>';});
+    h+='</div>';
+  }
+  return h;
+}
+function renderStatsCustomSectionOnly(){
+  var shell=document.getElementById('stp-custom');
+  if(!shell){renderStats();return;}
+  shell.innerHTML=buildStatsCustomSectionHTML();
+  ccWizardApplyFromStep();
+  if(_ccWizardStep===2){var nf=document.getElementById('ccn');if(nf){nf.focus();var L=nf.value.length;try{nf.setSelectionRange(L,L);}catch(e){}}}
+}
 function renderStats(){
   var all=state.moments.filter(function(e){return !e.isSummary;});
   var total=all.length;
@@ -1945,33 +2208,29 @@ function renderStats(){
   h+='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;padding:0 16px;margin-bottom:8px;line-height:1.6">Import a JSON export from another device. Duplicates are skipped automatically.</div>';
   h+='<input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(this)">';
   h+='<button class="eb2" onclick="document.getElementById(\'import-file\').click()">Import from JSON</button>';
-  h+='<div class="stl">Custom categories</div><div class="ccf">';
-  h+='<input class="cci" id="ccn" placeholder="Category name (required)...">';
-  h+='<select class="ccs" id="ccg">'+GROUPS.map(function(g){return'<option value="'+g.id+'">'+g.name+'</option>';}).join('')+'</select>';
-  h+='<textarea class="cci" id="ccw" placeholder="What this behavior is..." style="height:60px;resize:vertical"></textarea>';
-  h+='<textarea class="cci" id="ccex" placeholder="Example..." style="height:50px;resize:vertical"></textarea>';
-  h+='<textarea class="cci" id="ccint" placeholder="Internal reminder..." style="height:50px;resize:vertical"></textarea>';
-  h+='<textarea class="cci" id="ccsc" placeholder="How to respond..." style="height:50px;resize:vertical"></textarea>';
-  h+='<textarea class="cci" id="cccor" placeholder="Beginning correction..." style="height:50px;resize:vertical"></textarea>';
-  h+='<button class="ccb" onclick="addCC()">Add category</button></div>';
-  if(state.custom.length){h+='<div class="ccl">';state.custom.forEach(function(c){h+='<div class="cci2"><span class="cin2">'+c.l+'</span><button class="cdl" onclick="delCC(this)" data-cid="'+c.id+'">✕</button></div>';});h+='</div>';}
+  h+='<div id="stp-custom">'+buildStatsCustomSectionHTML()+'</div>';
   var stp=document.getElementById('stp');if(stp)stp.innerHTML=h;
+  ccWizardApplyFromStep();
+  if(_ccWizardStep===2){var nf=document.getElementById('ccn');if(nf){nf.focus();var L=nf.value.length;try{nf.setSelectionRange(L,L);}catch(e){}}}
 }
 function addCC(){
-  var n=(document.getElementById('ccn')||{}).value||'';n=n.trim();if(!n)return;
-  var g=(document.getElementById('ccg')||{}).value||GROUPS[0].id;
+  if(_ccWizardStep<3){toast('Use Continue until you reach the last step.');return;}
+  var n=(document.getElementById('ccn')||{}).value||'';n=n.trim();
+  if(!n){toast('Enter a name for this behavior.');return;}
+  var g=(document.getElementById('ccg')||{}).value||_ccWizardSel||'';
+  if(!g){toast('Select a category first.');return;}
   var w=(document.getElementById('ccw')||{}).value||'';
   var ex=(document.getElementById('ccex')||{}).value||'';
   var int2=(document.getElementById('ccint')||{}).value||'';
   var sc=(document.getElementById('ccsc')||{}).value||'';
   var cor=(document.getElementById('cccor')||{}).value||'';
   state.custom.push({id:'cc-'+Date.now(),g:g,l:n,w:w||'Custom category.',ex:ex,int:int2||'You defined this pattern.',sc:sc?[sc]:[],correction:cor});
-  ['ccn','ccw','ccex','ccint','ccsc','cccor'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  save();renderStats();rCats();toast('Category added.');
+  resetCCWizard();
+  save();renderStatsCustomSectionOnly();rCats();toast('Custom behavior added.');
 }
 function delCC(el){
   var id=el.getAttribute('data-cid');
-  state.custom=state.custom.filter(function(c){return c.id!==id;});save();renderStats();rCats();toast('Removed.');
+  state.custom=state.custom.filter(function(c){return c.id!==id;});save();renderStatsCustomSectionOnly();rCats();toast('Removed.');
 }
 
 // SUMMARY
@@ -2034,6 +2293,7 @@ function importJSON(input){
       var added=0;
       incoming.forEach(function(en){if(!existingIds.has(en.id)){state.moments.push(en);existingIds.add(en.id);added++;}});
       state.moments.sort(function(a,b){return new Date(b.ts)-new Date(a.ts);});
+      resetCCWizard();
       save();rAll();renderStats();toast('Imported '+added+' moment'+(added===1?'':'s')+'.');
     }catch(err){toast('Could not read file.');}
     input.value='';
@@ -2042,7 +2302,11 @@ function importJSON(input){
 }
 
 // TOAST
-function toast(msg){var t=document.getElementById('tst');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2000);}
+function toast(msg){
+  var t=document.getElementById('tst');if(!t)return;
+  t.textContent=msg;t.classList.add('on');
+  setTimeout(function(){t.classList.remove('on');},2000);
+}
 
 // WELCOME (intro + terms reference)
 function renderWelcome(){
@@ -2191,7 +2455,7 @@ function renderWelcome(){
       var term=GLOSS[i];if(!term)return;
       var tid='gl-'+i;
       h+='<div class="dc2"><div class="dch" onclick="togDef(this)" data-did="'+tid+'">';
-      h+='<div class="dcd" style="background:var(--accent-m)"></div>';
+      h+='<div class="dcd"></div>';
       h+='<span class="dcn">'+term.t+'</span>';
       h+='<span class="dct" id="ddt-'+tid+'">▾</span></div>';
       h+='<div class="dcb" id="'+tid+'">';
@@ -2207,7 +2471,16 @@ function renderWelcome(){
 
 // INIT
 window.addEventListener('DOMContentLoaded',function(){
+  var cc=document.getElementById('cult-check');
+  if(cc)cc.addEventListener('change',function(){
+    var n=document.getElementById('cult-note');
+    if(n)n.style.display=this.checked?'block':'none';
+  });
   load();
+  loadUserView();
+  loadShowRecentMomentsPref();
+  syncShowRecentMomentsUI();
+  syncViewPickerHighlight();
   rAll();
   renderRecentUsed();
   renderDefs('');
