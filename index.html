@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="The Covert Narcissist">
-<title>The Covert Narcissist</title>
+<meta name="apple-mobile-web-app-title" content="The Covert Narcissist Project">
+<title>The Covert Narcissist Project</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Nunito:wght@500;700&display=swap');
 :root{
@@ -356,8 +356,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-left">
-    <div class="hdr-eye">The Covert Narcissist</div>
-    <div class="hdr-name">You're safe here.</div>
+    <div class="hdr-eye">You're safe here</div>
+    <div class="hdr-name">The Covert Narcissist Project</div>
   </div>
   <div class="hdr-right">
     <button type="button" class="key-btn" onclick="openViewPicker()">Your view</button>
@@ -624,9 +624,9 @@ var GCD={1:'var(--g1d)',2:'var(--g2d)',3:'var(--g3d)',4:'var(--g4d)',5:'var(--g5
 var GCM={1:'var(--g1m)',2:'var(--g2m)',3:'var(--g3m)',4:'var(--g4m)',5:'var(--g5m)',6:'var(--g6m)',7:'var(--g7m)',8:'var(--g8m)'};
 function gColor(gid){var g=GROUPS.find(function(x){return x.id===gid;});return g?g.c:1;}
 
-// Core behaviors shown by default in Log tab (5 per group); rest via Learn → Add to Log
+// Core behaviors shown by default in Log tab (Attention & Control: 8; other groups: 5). Rest via Learn → Add to Log
 var CORE_CATS={
-  attention:['att-rec','con-int','cvt-sur','escl-conf','feign-con'],
+  attention:['att-rec','con-int','cvt-sur','escl-conf','feign-con','home-dir','non-apo','uns-adv'],
   narrative:['acc-min','bck-hnd','crd-red','cur-nar','exc-app'],
   rejection:['bod-sur','perf-inq','ref-rec','sel-ret','str-omi'],
   relationship:['hm-car','they-def','they-dec','opn-dis','hm-rol']
@@ -1608,10 +1608,16 @@ function save(){
 }
 function load(){
   try{var e=localStorage.getItem('pj1')||sessionStorage.getItem('pj1');if(e)state.moments=JSON.parse(e);}catch(e){}
-  try{var c=localStorage.getItem('pj1c');if(c)state.custom=JSON.parse(c);}catch(e){}
-  try{var n=localStorage.getItem('pj1n');if(n)state.catNotes=JSON.parse(n);}catch(e){}
-  try{var a=localStorage.getItem('pj1a');if(a)state.addedCats=JSON.parse(a);}catch(e){}
-  try{var h=localStorage.getItem('pj1h');if(h)state.hiddenCore=JSON.parse(h);}catch(e){}
+  try{var c=localStorage.getItem('pj1c');if(c){var cc=JSON.parse(c);if(Array.isArray(cc))state.custom=cc;}}catch(e){}
+  try{var n=localStorage.getItem('pj1n');if(n){var nn=JSON.parse(n);if(nn&&typeof nn==='object'&&!Array.isArray(nn))state.catNotes=nn;}}catch(e){}
+  try{
+    var a=localStorage.getItem('pj1a');
+    if(a){var ac=JSON.parse(a);if(Array.isArray(ac))state.addedCats=ac.filter(function(id){return typeof id==='string';});}
+  }catch(e){}
+  try{
+    var h=localStorage.getItem('pj1h');
+    if(h){var hc=JSON.parse(h);if(Array.isArray(hc))state.hiddenCore=hc.filter(function(id){return typeof id==='string';});}
+  }catch(e){}
 }
 function allCats(){return CATS.concat(state.custom);}
 
@@ -2270,16 +2276,23 @@ function genSummary(){
 
 // EXPORT/IMPORT
 function expJSON(){
-  var d=JSON.stringify({moments:state.moments,exported:new Date().toISOString()},null,2);
+  var d=JSON.stringify({
+    moments:state.moments,
+    addedCats:state.addedCats,
+    hiddenCore:state.hiddenCore,
+    custom:state.custom,
+    catNotes:state.catNotes,
+    exported:new Date().toISOString()
+  },null,2);
   var b=new Blob([d],{type:'application/json'});var u=URL.createObjectURL(b);
-  var a=document.createElement('a');a.href=u;a.download='pattern-journal-export.json';a.click();URL.revokeObjectURL(u);
+  var a=document.createElement('a');a.href=u;a.download='covert-narcissist-project-export.json';a.click();URL.revokeObjectURL(u);
 }
 function expCSV(){
   var rows=[['Date','Time','Category','Group','Cultural','Note']];
   state.moments.forEach(function(e){var dt=new Date(e.ts);rows.push([dt.toLocaleDateString('en-US'),dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),e.cl,e.gn,e.cultural?'yes':'no','"'+(e.note||'').replace(/"/g,'""')+'"']);});
   var csv=rows.map(function(r){return r.join(',');}).join('\n');
   var b=new Blob([csv],{type:'text/csv'});var u=URL.createObjectURL(b);
-  var a=document.createElement('a');a.href=u;a.download='pattern-journal-export.csv';a.click();URL.revokeObjectURL(u);
+  var a=document.createElement('a');a.href=u;a.download='covert-narcissist-project-export.csv';a.click();URL.revokeObjectURL(u);
 }
 function importJSON(input){
   var file=input.files[0];if(!file)return;
@@ -2293,6 +2306,23 @@ function importJSON(input){
       var added=0;
       incoming.forEach(function(en){if(!existingIds.has(en.id)){state.moments.push(en);existingIds.add(en.id);added++;}});
       state.moments.sort(function(a,b){return new Date(b.ts)-new Date(a.ts);});
+      if(Array.isArray(data.addedCats)){
+        var acSet=new Set(state.addedCats);
+        data.addedCats.forEach(function(id){if(typeof id==='string')acSet.add(id);});
+        state.addedCats=Array.from(acSet);
+      }
+      if(Array.isArray(data.hiddenCore)){
+        var hcSet=new Set(state.hiddenCore);
+        data.hiddenCore.forEach(function(id){if(typeof id==='string')hcSet.add(id);});
+        state.hiddenCore=Array.from(hcSet);
+      }
+      if(Array.isArray(data.custom)){
+        var haveC=new Set(state.custom.map(function(c){return c.id;}));
+        data.custom.forEach(function(c){if(c&&c.id&&typeof c.id==='string'&&!haveC.has(c.id)){state.custom.push(c);haveC.add(c.id);}});
+      }
+      if(data.catNotes&&typeof data.catNotes==='object'&&!Array.isArray(data.catNotes)){
+        Object.keys(data.catNotes).forEach(function(k){state.catNotes[k]=data.catNotes[k];});
+      }
       resetCCWizard();
       save();rAll();renderStats();toast('Imported '+added+' moment'+(added===1?'':'s')+'.');
     }catch(err){toast('Could not read file.');}
