@@ -251,10 +251,36 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 }
 .welcome-title{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(2.35rem,7vw,3.1rem);font-weight:400;font-style:italic!important;color:var(--accent-m);line-height:1.12;letter-spacing:.015em;text-align:center;margin:0 0 20px}
 .welcome-lede{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;max-width:34em;margin:0 auto;text-align:center}
+.welcome-jump-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px;width:100%;max-width:380px;padding:0 8px}
+.welcome-jump-btn{
+  flex:1 1 140px;max-width:185px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;
+  background:var(--surface);color:var(--accent-m);font-size:13px;font-weight:500;line-height:1.35;
+  font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;
+  cursor:pointer;transition:border-color .15s,background .15s,color .15s;
+}
+.welcome-jump-btn:hover{border-color:var(--accent);background:var(--accent-d)}
+.welcome-section-heading{
+  font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(1.45rem,4.2vw,2rem);font-weight:400;font-style:italic!important;
+  color:var(--accent-m);line-height:1.2;letter-spacing:.02em;text-align:left;margin:0;padding:8px 22px 12px;
+}
+.welcome-about{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;text-align:left;padding:0 22px 6px;max-width:40em}
+.welcome-about p{margin:0 0 12px}
+.welcome-about p:last-child{margin-bottom:16px}
+.welcome-instructions{margin-top:8px}
+.welcome-terms-snap{margin-top:36px;padding-top:28px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 24px,var(--bg) 48px)}
+.welcome-cta-btn{
+  margin-top:18px;width:100%;max-width:320px;padding:14px 22px;border:none;border-radius:10px;
+  background:var(--accent-m);color:#fff;font-size:15px;font-weight:500;line-height:1.35;
+  font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;
+  cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 2px 8px rgba(78,110,93,.22);
+}
+.welcome-cta-btn:hover{background:#456555}
+.welcome-cta-btn:active{transform:scale(.985)}
 
 /* Welcome-only scroll snap (proximity); disabled for reduced motion */
 @media (prefers-reduced-motion:no-preference){
-  html.welcome-snap{scroll-snap-type:y proximity;scroll-padding-top:100px;scroll-padding-bottom:92px}
+  html.welcome-snap{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:100px;scroll-padding-bottom:92px}
   html.welcome-snap .welcome-guide{scroll-snap-align:start;scroll-snap-stop:normal}
   html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:8px}
 }
@@ -445,11 +471,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
   <div class="welcome-hero">
     <h1 class="welcome-title">Welcome</h1>
     <p class="welcome-lede">Take a comfy seat, breathe, and let this be your little corner to reflect, notice patterns, and be gentle with yourself. You're right where you need to be.</p>
+    <div class="welcome-jump-row">
+      <button type="button" class="welcome-jump-btn" onclick="scrollWelcomeTo('welcome-how')">How this space works</button>
+      <button type="button" class="welcome-jump-btn" onclick="scrollWelcomeTo('welcome-glossary')">Understanding the language</button>
+    </div>
+    <button type="button" class="welcome-cta-btn" onclick="sw('log')">when you're ready</button>
   </div>
   <div class="welcome-guide">
-    <div class="gl-disc">
+    <h2 id="welcome-how" class="welcome-section-heading">How this space works</h2>
+    <div class="welcome-about">
       <p>This app is here to help you notice what's happening, slow down, and choose responses that fit your values when someone with narcissistic patterns is part of your life. Nothing here replaces therapy or safety planning; it's a private place to track what you observe and how you want to move.</p>
     </div>
+    <div class="welcome-instructions">
     <div class="gl-disc">
       <h3 class="gl-disc-title">The key</h3>
       <p>Tap <strong>Key</strong> in the header for PR, T, CH, CP, and PT—short roles used instead of names so examples stay clear. If a letter appears in a description, that's who the text is about.</p>
@@ -470,13 +503,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
       <h3 class="gl-disc-title">Insights</h3>
       <p><strong>Insights</strong> summarizes how often patterns show up and lets you export or import data. <strong>Custom categories</strong> are there if your situation needs labels that aren't in the default list.</p>
     </div>
-    <div class="gl-disc">
-      <h3 class="gl-disc-title">Terms reference</h3>
+    </div>
+  </div>
+  <div class="welcome-terms-snap" id="welcome-glossary">
+    <h2 class="welcome-section-heading">Understanding the language</h2>
+    <div class="welcome-about">
       <p>Below: definitions of common trauma and family-system terms—for understanding your own experience, not for labeling yourself or others.</p>
       <p>These terms describe patterns that can develop in people who have been in long-term relationships with narcissists. Understanding these terms is not self-diagnosis — it is a framework for making sense of responses that developed for good reasons in difficult conditions.</p>
     </div>
-  </div>
-  <div class="welcome-terms-snap">
     <div class="sect-divider" style="margin-top:8px;margin-bottom:4px"></div>
     <div id="welcome-panel"></div>
   </div>
@@ -1345,6 +1379,13 @@ function gc(n){return GC[n]||GC[1];}
 function gcd(n){return GCD[n]||GCD[1];}
 function gcm(n){return GCM[n]||GCM[1];}
 function gColor(gid){var g=GROUPS.find(function(x){return x.id===gid;});return g?g.c:1;}
+
+function scrollWelcomeTo(id){
+  var el=document.getElementById(id);if(!el)return;
+  var smooth=true;
+  try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)smooth=false;}catch(e){}
+  el.scrollIntoView({behavior:smooth?'smooth':'auto',block:'start'});
+}
 
 // Navigation
 function sw(p){
