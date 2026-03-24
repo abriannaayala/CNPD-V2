@@ -266,7 +266,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .welcome-about{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;text-align:left;padding:0 22px 6px;max-width:40em}
 .welcome-about p{margin:0 0 12px}
 .welcome-about p:last-child{margin-bottom:16px}
-.welcome-instructions{margin-top:8px}
+.welcome-instructions{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-left:16px;margin-right:16px}
+.welcome-instructions .dc2:last-child{border-bottom:none}
+.welcome-instructions .welcome-help-btn{margin-top:14px;display:block;width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:var(--accent-d);color:var(--accent-m);font-size:14px;font-weight:500;font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;cursor:pointer;transition:border-color .15s,background .15s}
+.welcome-instructions .welcome-help-btn:hover{border-color:var(--accent);background:var(--surface)}
 .welcome-terms-snap{margin-top:36px;padding-top:28px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 24px,var(--bg) 48px)}
 .welcome-cta-btn{
   margin-top:18px;width:100%;max-width:320px;padding:14px 22px;border:none;border-radius:10px;
@@ -483,25 +486,76 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
       <p>This app is here to help you notice what's happening, slow down, and choose responses that fit your values when someone with narcissistic patterns is part of your life. Nothing here replaces therapy or safety planning; it's a private place to track what you observe and how you want to move.</p>
     </div>
     <div class="welcome-instructions">
-    <div class="gl-disc">
-      <h3 class="gl-disc-title">The key</h3>
-      <p>Tap <strong>Key</strong> in the header for PR, T, CH, CP, and PT—short roles used instead of names so examples stay clear. If a letter appears in a description, that's who the text is about.</p>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-key">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">The key</span>
+        <span class="dct" id="ddt-welcome-key">▾</span>
+      </div>
+      <div class="dcb" id="welcome-key">
+        <div class="dtx">Tap <strong>Key</strong> in the header for PR, T, CH, CP, and PT—short roles used instead of names so examples stay clear. If a letter appears in a description, that's who the text is about.</div>
+      </div>
     </div>
-    <div class="gl-disc">
-      <h3 class="gl-disc-title">Log</h3>
-      <p>Use <strong>Log</strong> when something stands out. Add a short note if you want, set date and time, and choose the behavior that fits best—you're not grading yourself. Use <strong>Culturally influenced / ambiguous</strong> when background or intent might change how the moment reads. <strong>Save moment</strong> stores it; <strong>Recent moments</strong> shows what you logged last. Logging builds a factual, dated picture you can revisit without reliving everything at once.</p>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-log">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">Log</span>
+        <span class="dct" id="ddt-welcome-log">▾</span>
+      </div>
+      <div class="dcb" id="welcome-log">
+        <div class="dtx">Use <strong>Log</strong> when something stands out. Add a short note if you want, set date and time, and choose the behavior that fits best—you're not grading yourself. Use <strong>Culturally influenced / ambiguous</strong> when background or intent might change how the moment reads. <strong>Save moment</strong> stores it; <strong>Recent moments</strong> shows what you logged last. Logging builds a factual, dated picture you can revisit without reliving everything at once.</div>
+      </div>
     </div>
-    <div class="gl-disc">
-      <h3 class="gl-disc-title">History</h3>
-      <p>Use <strong>History</strong> to search, filter by cultural flag, pick a from/to range, or add a summary when you want a wider picture. Good for noticing repeats and pacing yourself before you respond or set boundaries.</p>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-history">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">History</span>
+        <span class="dct" id="ddt-welcome-history">▾</span>
+      </div>
+      <div class="dcb" id="welcome-history">
+        <div class="dtx">Use <strong>History</strong> to search, filter by cultural flag, pick a from/to range, or add a summary when you want a wider picture. Good for noticing repeats and pacing yourself before you respond or set boundaries.</div>
+      </div>
     </div>
-    <div class="gl-disc">
-      <h3 class="gl-disc-title">Learn</h3>
-      <p>Use <strong>Learn</strong> to read fuller descriptions, examples, and optional reminders about responses. Treat it as support for your clarity, not a script you must follow.</p>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-learn">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">Learn</span>
+        <span class="dct" id="ddt-welcome-learn">▾</span>
+      </div>
+      <div class="dcb" id="welcome-learn">
+        <div class="dtx">Use <strong>Learn</strong> to read fuller descriptions, examples, and optional reminders about responses. Treat it as support for your clarity, not a script you must follow.</div>
+      </div>
     </div>
-    <div class="gl-disc">
-      <h3 class="gl-disc-title">Insights</h3>
-      <p><strong>Insights</strong> summarizes how often patterns show up and lets you export or import data. <strong>Custom categories</strong> are there if your situation needs labels that aren't in the default list.</p>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-insights">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">Insights</span>
+        <span class="dct" id="ddt-welcome-insights">▾</span>
+      </div>
+      <div class="dcb" id="welcome-insights">
+        <div class="dtx"><strong>Insights</strong> summarizes how often patterns show up and lets you export or import data. <strong>Custom categories</strong> are there if your situation needs labels that aren't in the default list.</div>
+      </div>
+    </div>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-responses">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">When your responses change</span>
+        <span class="dct" id="ddt-welcome-responses">▾</span>
+      </div>
+      <div class="dcb" id="welcome-responses">
+        <div class="dtx">When you set boundaries or act differently, a narcissistic parent or partner may push back with anger, guilt, or manipulation. This is normal and not your fault. You may feel conflicted, but over time, consistent self-care and reflection help you reclaim your emotional space. Journaling, support from trusted people, and self-compassion can make this process safer and empowering.</div>
+      </div>
+    </div>
+    <div class="dc2">
+      <div class="dch" onclick="togDef(this)" data-did="welcome-helpful">
+        <div class="dcd" style="background:var(--accent-m)"></div>
+        <span class="dcn">Helpful terms</span>
+        <span class="dct" id="ddt-welcome-helpful">▾</span>
+      </div>
+      <div class="dcb" id="welcome-helpful">
+        <div class="dtx">Short explanations of trauma- and family-system language used in this app live in <strong>Understanding the language</strong> below.</div>
+        <button type="button" class="welcome-help-btn" onclick="scrollWelcomeTo('welcome-glossary')">Understanding the language</button>
+      </div>
     </div>
     </div>
   </div>
