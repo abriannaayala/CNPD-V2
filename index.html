@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="welcome-snap">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -32,6 +32,9 @@
   --g6:#a87979;--g6d:#f6ecec;--g6m:#815757;
   --g7:#869b6e;--g7d:#edf2e5;--g7m:#65794f;
   --g8:#9e8877;--g8d:#f2ece6;--g8m:#7a6354;
+
+  /* Welcome: first-screen hero height ≈ viewport − header − bottom nav + safe areas */
+  --welcome-hero-offset:calc(104px + 78px + env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px));
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 /* Mental-health-friendly typography: readable, gentle, consistent */
@@ -239,9 +242,22 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .cdl:hover{color:#c05050}
 
 /* WELCOME TAB */
-.welcome-hero{padding:28px 22px 20px;margin-bottom:4px}
+.welcome-hero{
+  min-height:calc(100vh - var(--welcome-hero-offset));
+  min-height:calc(100svh - var(--welcome-hero-offset));
+  min-height:calc(100dvh - var(--welcome-hero-offset));
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:24px 22px 32px;margin-bottom:4px;box-sizing:border-box;
+}
 .welcome-title{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(2.35rem,7vw,3.1rem);font-weight:400;font-style:italic!important;color:var(--accent-m);line-height:1.12;letter-spacing:.015em;text-align:center;margin:0 0 20px}
 .welcome-lede{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;max-width:34em;margin:0 auto;text-align:center}
+
+/* Welcome-only scroll snap (proximity); disabled for reduced motion */
+@media (prefers-reduced-motion:no-preference){
+  html.welcome-snap{scroll-snap-type:y proximity;scroll-padding-top:100px;scroll-padding-bottom:92px}
+  html.welcome-snap .welcome-guide{scroll-snap-align:start;scroll-snap-stop:normal}
+  html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:8px}
+}
 
 /* WELCOME (terms reference, formerly standalone glossary) */
 .gl-wrap{}
@@ -460,8 +476,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
       <p>These terms describe patterns that can develop in people who have been in long-term relationships with narcissists. Understanding these terms is not self-diagnosis — it is a framework for making sense of responses that developed for good reasons in difficult conditions.</p>
     </div>
   </div>
-  <div class="sect-divider" style="margin-top:8px;margin-bottom:4px"></div>
-  <div id="welcome-panel"></div>
+  <div class="welcome-terms-snap">
+    <div class="sect-divider" style="margin-top:8px;margin-bottom:4px"></div>
+    <div id="welcome-panel"></div>
+  </div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -1334,6 +1352,7 @@ function sw(p){
   document.querySelectorAll('.nbt').forEach(function(x){x.classList.remove('on');});
   var pg=document.getElementById('pg-'+p);var nb=document.getElementById('nb-'+p);
   if(pg)pg.classList.add('on');if(nb)nb.classList.add('on');
+  document.documentElement.classList.toggle('welcome-snap',p==='welcome');
   if(p==='st')renderStats();
   if(p==='def'){_defDetail=document.getElementById('def-detail-toggle').checked;renderDefs('');}
   if(p==='hist')renderHistory();
