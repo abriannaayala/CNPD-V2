@@ -34,7 +34,7 @@
   --g8:#9e8877;--g8d:#f2ece6;--g8m:#7a6354;
 
   /* Welcome: first-screen hero height ≈ viewport − header − bottom nav + safe areas */
-  --welcome-hero-offset:calc(104px + 78px + env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px));
+  --welcome-hero-offset:calc(116px + 92px + env(safe-area-inset-top,0px) + env(safe-area-inset-bottom,0px));
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 /* Mental-health-friendly typography: readable, gentle, consistent */
@@ -43,25 +43,58 @@
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
 
 /* HEADER */
-.hdr{padding:48px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:100}
-.hdr-eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
-.hdr-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:300;font-style:italic;color:var(--accent-m);line-height:1}
-.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr{padding:44px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:100}
+.hdr-left{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding-right:14px;gap:0}
+.hdr-name{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.35rem,4.2vw,1.5rem);font-weight:300;font-style:italic;color:var(--accent-m);line-height:1.12;letter-spacing:.01em}
+.hdr-tagline{
+  margin:8px 0 0;
+  max-width:26em;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(0.94rem,3.1vw,1.05rem);
+  font-weight:400;
+  font-style:italic;
+  color:var(--accent-m);
+  letter-spacing:.04em;
+  line-height:1.4;
+  opacity:.88;
+}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .key-btn{background:none;border:1px solid var(--border);border-radius:20px;color:var(--muted);cursor:pointer;font-size:13px;padding:5px 11px;font-family:'DM Sans',sans-serif;font-size:12px}
 .key-btn:hover{border-color:var(--accent);color:var(--accent-m)}
 
 /* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:200}
-.nbt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);transition:color .15s}
-.nbt .ni{font-size:16px;line-height:1}
-.nbt.on{color:var(--accent-m)}
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  display:flex;align-items:stretch;gap:5px;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));
+  background:var(--card);
+  border-top:1px solid var(--border);
+  box-shadow:0 -3px 14px rgba(37,35,31,.07);
+}
+.nbt{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;min-height:52px;padding:6px 4px;border:none;border-radius:12px;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted);background:transparent;
+  transition:color .15s,background .15s,box-shadow .15s,font-weight .15s;
+}
+.nbt .ni{font-size:20px;line-height:1;color:inherit;opacity:.88}
+.nbt:active:not(.on){background:rgba(37,35,31,.06)}
+.nbt.on:active{filter:brightness(.96)}
+.nbt.on{
+  color:var(--accent-m);font-weight:700;
+  background:var(--accent-d);
+  box-shadow:inset 0 0 0 1.5px rgba(78,110,93,.35),0 1px 2px rgba(78,110,93,.08);
+}
+.nbt.on .ni{opacity:1}
+.nbt:focus-visible{outline:2px solid var(--accent-m);outline-offset:2px}
 
 /* PAGES */
-.pg{display:none;padding:0 0 90px 0;min-height:100vh}
+.pg{display:none;padding:0 0 102px 0;min-height:100vh}
 .pg.on{display:block}
 
 /* TOAST */
-.tst{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);font-family:'DM Mono',monospace;font-size:11px;padding:8px 18px;border-radius:20px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:500;white-space:nowrap}
+.tst{position:fixed;bottom:112px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);font-family:'DM Mono',monospace;font-size:11px;padding:8px 18px;border-radius:20px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:500;white-space:nowrap}
 .tst.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* KEY OVERLAY */
@@ -81,6 +114,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .view-opt.on{border-color:var(--accent-m);background:var(--accent-d);box-shadow:0 0 0 1px var(--accent)}
 .view-opt-t{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
 .view-opt-d{display:block;font-size:12px;color:var(--muted);line-height:1.45;font-weight:300}
+.view-name-row{display:block;margin-bottom:14px}
+.view-name-lbl{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;line-height:1.35;font-weight:500}
+.view-name-input{display:block;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:14px;font-weight:300;outline:none}
+.view-name-input:focus{border-color:var(--accent)}
+.view-names-actions{display:flex;gap:10px;margin-top:22px}
+.view-names-actions .key-close{flex:1;margin-top:0}
+.view-names-confirm{flex:1;padding:12px;border-radius:8px;border:none;background:var(--accent-m);color:#fff;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.view-names-confirm:hover{filter:brightness(1.05)}
 
 /* LOG TAB */
 .log-welcome{padding:20px 20px 0;margin-bottom:4px}
@@ -175,6 +216,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 /* LEARN TAB (formerly Definitions) */
 .def-toggle-bar,.log-feed-toolbar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.def-toggle-learn-label{display:flex;align-items:center;gap:10px;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent}
 .def-toggle-label{font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif}
 .toggle-sw{position:relative;width:36px;height:20px;cursor:pointer}
 .toggle-sw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer;z-index:2}
@@ -254,15 +296,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
   min-height:calc(100vh - var(--welcome-hero-offset));
   min-height:calc(100svh - var(--welcome-hero-offset));
   min-height:calc(100dvh - var(--welcome-hero-offset));
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:24px 22px 40px;margin-bottom:56px;box-sizing:border-box;
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+  padding:10px 22px 40px;margin-bottom:56px;box-sizing:border-box;
 }
-.welcome-title{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(2.35rem,7vw,3.1rem);font-weight:400;font-style:italic!important;color:var(--accent-m);line-height:1.12;letter-spacing:.015em;text-align:center;margin:0 0 20px}
-.welcome-lede{font-size:15px;color:var(--text);line-height:1.75;font-weight:400;max-width:34em;margin:0 auto;text-align:center}
-.welcome-jump-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px;width:100%;max-width:380px;padding:0 8px}
+.welcome-title{font-family:'Cormorant Garamond',Georgia,serif!important;font-size:clamp(2.94rem,8.75vw,3.88rem);font-weight:400;font-style:italic!important;color:var(--accent-m);line-height:1.12;letter-spacing:.015em;text-align:center;margin:0 0 22px}
+.welcome-lede{font-size:calc(15px * 1.25);color:var(--text);line-height:1.75;font-weight:400;max-width:34em;margin:0 auto;text-align:center;display:flex;flex-direction:column;gap:1.15em}
+.welcome-lede p{margin:0}
+.welcome-jump-row{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:center;gap:10px;margin-top:22px;width:100%;max-width:320px;padding:0}
 .welcome-jump-btn{
-  flex:1 1 140px;max-width:185px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;
-  background:var(--surface);color:var(--accent-m);font-size:13px;font-weight:500;line-height:1.35;
+  width:100%;flex:none;max-width:none;padding:12px 16px;border:1px solid var(--border);border-radius:10px;
+  background:var(--surface);color:var(--accent-m);font-size:calc(13px * 1.25);font-weight:500;line-height:1.35;
   font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;
   cursor:pointer;transition:border-color .15s,background .15s;
 }
@@ -280,10 +323,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .welcome-instructions .dc2:last-child{border-bottom:none}
 .welcome-instructions .welcome-help-btn{margin-top:14px;display:block;width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:var(--accent-d);color:var(--accent-m);font-size:14px;font-weight:500;font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;cursor:pointer;transition:border-color .15s,background .15s}
 .welcome-instructions .welcome-help-btn:hover{border-color:var(--accent);background:var(--surface)}
-.welcome-terms-snap{margin-top:100px;padding-top:15px;padding-bottom:24px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 36px,var(--bg) 72px)}
+.welcome-terms-snap{margin-top:100px;padding-top:64px;padding-bottom:24px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 36px,var(--bg) 72px)}
 .welcome-cta-btn{
-  margin-top:18px;width:100%;max-width:320px;padding:14px 22px;border:none;border-radius:10px;
-  background:var(--accent-m);color:#fff;font-size:15px;font-weight:500;line-height:1.35;
+  margin-top:18px;width:100%;max-width:320px;min-height:54px;padding:16px 22px;border:none;border-radius:10px;
+  background:var(--accent-m);color:#fff;font-size:calc(15px * 1.25);font-weight:500;line-height:1.35;
   font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;
   cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;
   box-shadow:0 2px 8px rgba(78,110,93,.22);
@@ -293,9 +336,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 /* Welcome-only scroll snap (proximity); disabled for reduced motion */
 @media (prefers-reduced-motion:no-preference){
-  html.welcome-snap{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:80px;scroll-padding-bottom:24px}
+  html.welcome-snap{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:100px;scroll-padding-bottom:104px}
   html.welcome-snap .welcome-guide{scroll-snap-align:start;scroll-snap-stop:normal}
-  html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:200px}
+  html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:24px}
 }
 
 /* Shared card style (Log welcome blurb, etc.) */
@@ -305,7 +348,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .gl-disc-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
 .gl-disc h3.gl-disc-title{margin:0 0 8px;font-weight:500;font-style:normal;font-size:9px;letter-spacing:.12em}
 .welcome-guide{padding:48px 0 72px}
-.welcome-terms-snap>.sect-divider{margin-top:50px!important;margin-bottom:50px!important}
+.welcome-terms-snap>.sect-divider{margin-top:10px!important;margin-bottom:10px!important}
+#welcome-glossary .welcome-about p:last-child{margin-bottom:10px}
 .welcome-gloss-grp{margin-bottom:20px}
 .welcome-gloss-grp:last-child{margin-bottom:8px}
 #welcome-panel .dcd{background:var(--accent-m)}
@@ -356,8 +400,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-left">
-    <div class="hdr-eye">You're safe here</div>
     <div class="hdr-name">The Covert Narcissist Project</div>
+    <p class="hdr-tagline">Breathe. Reflect. Grow.</p>
   </div>
   <div class="hdr-right">
     <button type="button" class="key-btn" onclick="openViewPicker()">Your view</button>
@@ -366,14 +410,25 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 <!-- YOUR VIEW (plain language; replaces role abbreviations in behavior text) -->
 <div class="key-overlay" id="view-overlay" onclick="viewOvClick(event)">
-  <div class="key-panel">
-    <div class="key-title">Your view shapes the language</div>
-    <div class="key-sub">Behavior descriptions use plain words instead of codes. Pick the situation closest to yours; you can change this anytime.</div>
-    <div class="view-opt" data-view="partner" onclick="selectUserView('partner')"><span class="view-opt-t">Partner of this person</span><span class="view-opt-d">You’re partnered with the person whose patterns you’re tracking.</span></div>
-    <div class="view-opt" data-view="child" onclick="selectUserView('child')"><span class="view-opt-t">Their adult child</span><span class="view-opt-d">You’re the grown child in the dynamic.</span></div>
-    <div class="view-opt" data-view="acpartner" onclick="selectUserView('acpartner')"><span class="view-opt-t">Partner of their adult child</span><span class="view-opt-d">You’re partnered with their adult child (e.g. in-law context).</span></div>
-    <div class="view-opt" data-view="neutral" onclick="selectUserView('neutral')"><span class="view-opt-t">I’m learning / other</span><span class="view-opt-d">Neutral wording (therapist, friend, or exploring without a fixed role).</span></div>
-    <button class="key-close" onclick="closeViewPicker()">Done</button>
+  <div class="key-panel" onclick="event.stopPropagation()">
+    <div id="view-step-pick">
+      <div class="key-title">Match wording to your situation</div>
+      <div class="key-sub">Pick the situation closest to yours</div>
+      <div class="view-opt" data-view="partner" onclick="selectUserView('partner')"><span class="view-opt-t">You’re their partner</span><span class="view-opt-d">The person you’re tracking is your partner (or the equivalent relationship on that side of the family).</span></div>
+      <div class="view-opt" data-view="child" onclick="selectUserView('child')"><span class="view-opt-t">You’re their adult child</span><span class="view-opt-d">The pattern involves a parent or parent figure on your side of the bond—you’re the grown child in that line.</span></div>
+      <div class="view-opt" data-view="acpartner" onclick="selectUserView('acpartner')"><span class="view-opt-t">You’re with their adult child</span><span class="view-opt-d">Your partner is their adult child; you’re navigating a parent or in-law dynamic at one step removed.</span></div>
+      <div class="view-opt" data-view="neutral" onclick="selectUserView('neutral')"><span class="view-opt-t">I'm learning</span><span class="view-opt-d">You want to keep all language general.</span></div>
+      <button type="button" class="key-close" onclick="closeViewPicker()">Done</button>
+    </div>
+    <div id="view-step-names" style="display:none">
+      <div class="key-title">Optional first names</div>
+      <div class="key-sub">Saved only on this device. Leave blank to keep the default wording. If a field says <strong>You (optional)</strong>, your entry won’t replace the app’s built-in “you/your” wording.</div>
+      <div id="view-names-fields"></div>
+      <div class="view-names-actions">
+        <button type="button" class="key-close view-names-back" onclick="backToViewPicker()">Back</button>
+        <button type="button" class="view-names-confirm" onclick="confirmViewNames()">Apply</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -447,8 +502,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 <div class="pg" id="pg-def">
   <div class="dsr-prominent"><input class="dsi-prominent" id="def-search" placeholder="Search behaviors..." oninput="fd(this.value)" autocomplete="off"></div>
   <div class="def-toggle-bar">
-    <label class="toggle-sw"><input type="checkbox" id="def-detail-toggle" onchange="renderLearnDefs()"><span class="slider"></span></label>
-    <span class="def-toggle-label">Show detailed view</span>
+    <label class="def-toggle-learn-label">
+      <span class="toggle-sw"><input type="checkbox" id="def-detail-toggle"><span class="slider"></span></span>
+      <span class="def-toggle-label">Show detailed view</span>
+    </label>
   </div>
   <div id="defc"></div>
 </div>
@@ -488,13 +545,16 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 <!-- === WELCOME TAB === -->
 <div class="pg on" id="pg-welcome">
   <div class="welcome-hero">
-    <h1 class="welcome-title">Welcome</h1>
-    <p class="welcome-lede">Take a comfy seat, breathe, and let this be your little corner to reflect, notice patterns, and be gentle with yourself. You're right where you need to be.</p>
+    <h1 class="welcome-title">Breathe. Reflect. Grow.</h1>
+    <div class="welcome-lede">
+      <p>You're right where you need to be.</p>
+      <p>Use this space to notice patterns, explore your thoughts, and reflect on your experiences at your own pace.</p>
+    </div>
     <div class="welcome-jump-row">
       <button type="button" class="welcome-jump-btn" onclick="scrollWelcomeTo('welcome-how')">How this space works</button>
       <button type="button" class="welcome-jump-btn" onclick="scrollWelcomeTo('welcome-glossary')">Understanding the language</button>
     </div>
-    <button type="button" class="welcome-cta-btn" onclick="sw('log')">when you're ready</button>
+    <button type="button" class="welcome-cta-btn" onclick="sw('log')">When You're Ready</button>
   </div>
   <div class="welcome-guide">
     <h2 id="welcome-how" class="welcome-section-heading">How this space works</h2>
@@ -509,7 +569,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
           <span class="dct" id="ddt-welcome-key">▾</span>
         </div>
         <div class="dcb" id="welcome-key">
-          <div class="dtx">Tap <strong>Your view</strong> in the header and pick the situation that fits you best. Behavior descriptions use plain language for your role (e.g. “your parent,” “your partner”) so you do not need to memorize abbreviations. You can change this anytime.</div>
+          <div class="dtx">Tap <strong>Your view</strong> in the header and choose how wording should address you. Descriptions use plain roles—like <em>your parent</em> or <em>your partner</em>—instead of codes, and you can switch the wording anytime.</div>
         </div>
       </div>
       <div class="dc2">
@@ -581,7 +641,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
       <p>These are definitions of common trauma and family-system terms—for understanding your own experience, not for labeling yourself or others.</p>
       <p>These terms describe patterns that can develop in people who have been in long-term relationships with narcissists. Understanding these terms is not self-diagnosis — it is a framework for making sense of responses that developed for good reasons in difficult conditions.</p>
     </div>
-    <div class="sect-divider" style="margin-top:8px;margin-bottom:4px"></div>
+    <div class="sect-divider"></div>
     <div id="welcome-panel"></div>
   </div>
 </div>
@@ -1135,7 +1195,7 @@ correction:'Not every moment needs intervention. Choose the moments that protect
 {id:'hm-acc',g:'attention',l:'Access control',
 w:'PR manages access to CH and acts like a gatekeeper, even in spaces that are not theirs.',
 ex:'PR speaks as if they control invitations, timing, or hosting around CH.',
-int:'That is CP\'s job. You are CH\'s wife. The invitation should not have come from them. The FaceTime welcome to your guest was a reach.',
+int:'That is PT\'s job. You are PT\'s wife. The invitation should not have come from them. The FaceTime welcome to your guest was a reach.',
 sc:['Step into plans that involve your partner and home.'],
 correction:'Take your role clearly and calmly in invitations, hosting, and planning.',
 foldNote:'Also captures: remote hosting insertion -- inserting themself as welcoming authority into your home over FaceTime or through messaging even when not physically present.'},
@@ -1498,8 +1558,8 @@ var VIEW_TOKEN_MAP={
     _T:"you"
   },
   acpartner:{
-    "PR's":"the parent's",
-    "PT's":"the other parent's",
+    "PR's":"your partner's parent's",
+    "PT's":"your partner's other parent's",
     "CH's":"your partner's",
     "CP's":"your",
     "PR":"your partner's parent",
@@ -1525,6 +1585,178 @@ function loadUserView(){
     userView=isReaderView(v)?v:'neutral';
   }catch(e){userView='neutral';}
 }
+// ============================
+// Optional first-name overrides
+// ============================
+var PJ1_VIEW_NAMES_KEY='pj1viewNames';
+var userRoleNames={partner:{},child:{},acpartner:{}};
+var PJ1_VIEW_NAMES_DEBUG_LOGGED={tokenMap:{},fields:{}};
+
+// Labels/placeholder copy for the role-name step.
+// "You (optional)" fields are for internal reference only; we do NOT use those names in generated sentences.
+var VIEW_ROLE_NAME_CONFIG={
+  partner:[
+    {k:'PR',l:"The person you're tracking",ph:'First name'},
+    {k:'PT',l:'You (optional)',ph:'Your name.'},
+    {k:'CH',l:'Your child together (if relevant)',ph:'First name'},
+    {k:'CP',l:'Their other partner or family member (if relevant)',ph:'First name'}
+  ],
+  child:[
+    {k:'PR',l:"The parent you're tracking",ph:'First name'},
+    {k:'PT',l:'Their partner (if relevant)',ph:'First name'},
+    {k:'CH',l:'You (optional)',ph:'Your name.'},
+    {k:'CP',l:'Your partner (if relevant)',ph:'First name'}
+  ],
+  acpartner:[
+    {k:'PR',l:"The person you're tracking",ph:'First name'},
+    {k:'PT',l:'Their partner (if relevant)',ph:'First name'},
+    {k:'CH',l:"Your partner's name",ph:'First name'},
+    {k:'CP',l:'You (optional)',ph:'Your name.'}
+  ]
+};
+
+// Which token key represents the user themselves for each view.
+// These are intentionally NOT overridden with user-entered names.
+var VIEW_SELF_ROLE_KEY={partner:'PT',child:'CH',acpartner:'CP'};
+
+function loadUserRoleNames(){
+  try{
+    var raw=localStorage.getItem(PJ1_VIEW_NAMES_KEY);
+    if(!raw)return;
+    var obj=JSON.parse(raw);
+    if(!obj||typeof obj!=='object')return;
+    Object.keys(userRoleNames).forEach(function(vk){
+      if(!obj[vk]||typeof obj[vk]!=='object')return;
+      ['PR','PT','CH','CP'].forEach(function(k){
+        if(obj[vk][k]!=null)userRoleNames[vk][k]=String(obj[vk][k]);
+      });
+    });
+  }catch(e){}
+  // #region debug-loadUserRoleNames
+  try{
+    function countNonEmpty(vk){
+      var o=userRoleNames[vk]||{};
+      var n=0;
+      ['PR','PT','CH','CP'].forEach(function(k){
+        if(o[k]&&String(o[k]).trim().length)n++;
+      });
+      return n;
+    }
+    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H5',location:'index.html:loadUserRoleNames',message:'role names loaded counts (booleans only)',data:{counts:{partner:countNonEmpty('partner'),child:countNonEmpty('child'),acpartner:countNonEmpty('acpartner')}},timestamp:Date.now()})}).catch(function(){});
+  }catch(e){}
+  // #endregion
+}
+
+function saveUserRoleNames(){
+  try{localStorage.setItem(PJ1_VIEW_NAMES_KEY,JSON.stringify(userRoleNames));}catch(e){}
+}
+
+function getEffectiveTokenMap(vk){
+  if(vk==='neutral')return SHARED_PLAIN;
+  var base=VIEW_TOKEN_MAP[vk]||SHARED_PLAIN;
+  var map=Object.assign({},base); // shallow clone: values are strings
+  var names=(userRoleNames&&userRoleNames[vk])?userRoleNames[vk]:{};
+  var selfKey=VIEW_SELF_ROLE_KEY[vk]||null;
+  ['PR','PT','CH','CP'].forEach(function(k){
+    if(k===selfKey)return; // internal only
+    var nm=names&&names[k]?String(names[k]).trim():'';
+    if(nm){
+      map[k]=nm;
+      map[k+"'s"]=nm+"'s";
+    }
+  });
+  // #region debug-getEffectiveTokenMap
+  try{
+    if(!PJ1_VIEW_NAMES_DEBUG_LOGGED.tokenMap[vk]){
+      PJ1_VIEW_NAMES_DEBUG_LOGGED.tokenMap[vk]=true;
+      var overrides={};
+      ['PR','PT','CH','CP'].forEach(function(k){
+        if(k===selfKey)return;
+        var nm=names&&names[k]?String(names[k]).trim():'';
+        overrides[k]=!!nm;
+      });
+      fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H3',location:'index.html:getEffectiveTokenMap',message:'effective token overrides (booleans only)',data:{vk:vk,selfKey:selfKey,overrides:overrides,selfNameSet:!!(selfKey&&names&&names[selfKey]&&String(names[selfKey]).trim().length)},timestamp:Date.now()})}).catch(function(){});
+    }
+  }catch(e){}
+  // #endregion
+  return map;
+}
+
+function setViewStep(step){
+  var pick=document.getElementById('view-step-pick');
+  var names=document.getElementById('view-step-names');
+  if(step==='pick'){
+    if(pick)pick.style.display='';
+    if(names)names.style.display='none';
+  }else{
+    if(pick)pick.style.display='none';
+    if(names)names.style.display='';
+  }
+}
+
+function renderViewNamesFields(vk){
+  var wrap=document.getElementById('view-names-fields');
+  if(!wrap)return;
+  var cfg=VIEW_ROLE_NAME_CONFIG[vk]||[];
+  var cur=(userRoleNames&&userRoleNames[vk])?userRoleNames[vk]:{};
+
+  var h='';
+  cfg.forEach(function(r){
+    var id='view-name-'+r.k;
+    var val=cur&&cur[r.k]?String(cur[r.k]):'';
+    h+='<div style="margin-bottom:12px">';
+    h+='<label class="view-name-lbl" for="'+id+'">'+escAttr(r.l)+'</label>';
+    h+='<input class="view-name-input" type="text" id="'+id+'" placeholder="'+escAttr(r.ph)+'" value="'+escAttr(val)+'" autocomplete="given-name">';
+    h+='</div>';
+  });
+  wrap.innerHTML=h;
+}
+
+function backToViewPicker(){
+  setViewStep('pick');
+}
+
+function openRoleNamesStep(vk){
+  setViewStep('names');
+  renderViewNamesFields(vk);
+  // #region debug-openRoleNamesStep
+  try{
+    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:openRoleNamesStep',message:'opened names step',data:{vk:vk},timestamp:Date.now()})}).catch(function(){});
+  }catch(e){}
+  // #endregion
+}
+
+function confirmViewNames(){
+  var vk=readerViewKey();
+  if(vk==='neutral'){closeViewPicker();applyUserViewChange();return;}
+  var cfg=VIEW_ROLE_NAME_CONFIG[vk]||[];
+  if(!cfg.length){closeViewPicker();applyUserViewChange();return;}
+
+  if(!userRoleNames[vk])userRoleNames[vk]={};
+  var selfKey=VIEW_SELF_ROLE_KEY[vk]||null;
+  cfg.forEach(function(r){
+    var el=document.getElementById('view-name-'+r.k);
+    var nm=el?String(el.value||'').trim():'';
+    // "You (optional)" is internal-only and never used for generation,
+    // so we avoid persisting it to keep storage minimal and behavior predictable.
+    if(r.k===selfKey)return;
+    userRoleNames[vk][r.k]=nm;
+  });
+  // #region debug-confirmViewNames
+  try{
+    var nameSet={};
+    ['PR','PT','CH','CP'].forEach(function(k){
+      if(k===selfKey)return;
+      var el=document.getElementById('view-name-'+k);
+      nameSet[k]=!!(el&&String(el.value||'').trim().length);
+    });
+    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H2',location:'index.html:confirmViewNames',message:'confirmed view role-name step (booleans only)',data:{vk:vk,selfKey:selfKey,nameSet:nameSet,selfNameSet:!!(selfKey&&document.getElementById('view-name-'+selfKey)&&String(document.getElementById('view-name-'+selfKey).value||'').trim().length)},timestamp:Date.now()})}).catch(function(){});
+  }catch(e){}
+  // #endregion
+  saveUserRoleNames();
+  closeViewPicker();
+  applyUserViewChange();
+}
 function applyTokenMap(str,map){
   if(str==null||str==='')return '';
   var s=String(str);
@@ -1534,7 +1766,19 @@ function applyTokenMap(str,map){
 }
 function viewMapForField(field){
   if(VIEW_USES_SHARED_PLAIN[field])return SHARED_PLAIN;
-  return VIEW_TOKEN_MAP[readerViewKey()]||SHARED_PLAIN;
+  var vk=readerViewKey();
+  if(vk==='neutral')return SHARED_PLAIN;
+  // #region debug-viewMapForField
+  try{
+    if(!PJ1_VIEW_NAMES_DEBUG_LOGGED.fields[field]){
+      PJ1_VIEW_NAMES_DEBUG_LOGGED.fields[field]=true;
+      if(['w','ex','foldNote','int','sc','correction'].indexOf(field)!==-1){
+        fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H4',location:'index.html:viewMapForField',message:'field token map routing',data:{field:field,vk:vk,usesSharedPlain:!!VIEW_USES_SHARED_PLAIN[field]},timestamp:Date.now()})}).catch(function(){});
+      }
+    }
+  }catch(e){}
+  // #endregion
+  return getEffectiveTokenMap(vk);
 }
 function catFieldOverride(cat,field){
   var o=cat[field+'_'+readerViewKey()];
@@ -1582,17 +1826,36 @@ function selectUserView(v){
   if(!isReaderView(v))return;
   userView=v;
   try{localStorage.setItem('pj1view',v);}catch(e){}
-  closeViewPicker();
+  // Neutral: no follow-up names step
+  if(v==='neutral'){
+    // #region debug-selectUserView-neutral
+    try{
+      fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:selectUserView',message:'neutral view path',data:{v:v},timestamp:Date.now()})}).catch(function(){});
+    }catch(e){}
+    // #endregion
+    closeViewPicker();
+    applyUserViewChange();
+    return;
+  }
+  // Non-neutral: open role-name step and let user apply/adjust optional names.
   applyUserViewChange();
+  openRoleNamesStep(v);
+  // #region debug-selectUserView-nonNeutral
+  try{
+    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:selectUserView',message:'non-neutral view path (names step should open)',data:{v:v},timestamp:Date.now()})}).catch(function(){});
+  }catch(e){}
+  // #endregion
 }
 function openViewPicker(){
   syncViewPickerHighlight();
+  setViewStep('pick');
   var ov=viewOverlay();
   if(ov)ov.classList.add('on');
 }
 function closeViewPicker(){
   var ov=viewOverlay();
   if(ov)ov.classList.remove('on');
+  setViewStep('pick');
 }
 function viewOvClick(e){if(e.target===viewOverlay())closeViewPicker();}
 
@@ -2508,11 +2771,25 @@ window.addEventListener('DOMContentLoaded',function(){
   });
   load();
   loadUserView();
+  loadUserRoleNames();
   loadShowRecentMomentsPref();
   syncShowRecentMomentsUI();
   syncViewPickerHighlight();
   rAll();
   renderRecentUsed();
+  (function initLearnDetailToggle(){
+    var defDetToggle=document.getElementById('def-detail-toggle');
+    if(!defDetToggle)return;
+    try{
+      var sd=localStorage.getItem('pj1defDetail');
+      if(sd==='1')defDetToggle.checked=true;
+      else if(sd==='0')defDetToggle.checked=false;
+    }catch(e){}
+    defDetToggle.addEventListener('change',function(){
+      try{localStorage.setItem('pj1defDetail',this.checked?'1':'0');}catch(e){}
+      renderLearnDefs();
+    });
+  })();
   renderDefs('');
   renderWelcome();
 });
