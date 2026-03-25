@@ -280,7 +280,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 .welcome-instructions .dc2:last-child{border-bottom:none}
 .welcome-instructions .welcome-help-btn{margin-top:14px;display:block;width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:var(--accent-d);color:var(--accent-m);font-size:14px;font-weight:500;font-family:'Atkinson Hyperlegible',-apple-system,'Segoe UI',Arial,sans-serif!important;cursor:pointer;transition:border-color .15s,background .15s}
 .welcome-instructions .welcome-help-btn:hover{border-color:var(--accent);background:var(--surface)}
-.welcome-terms-snap{margin-top:100px;padding-top:64px;padding-bottom:24px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 36px,var(--bg) 72px)}
+.welcome-terms-snap{margin-top:100px;padding-top:15px;padding-bottom:24px;background:linear-gradient(to bottom,transparent 0,rgba(250,247,242,.65) 36px,var(--bg) 72px)}
 .welcome-cta-btn{
   margin-top:18px;width:100%;max-width:320px;padding:14px 22px;border:none;border-radius:10px;
   background:var(--accent-m);color:#fff;font-size:15px;font-weight:500;line-height:1.35;
@@ -293,7 +293,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 /* Welcome-only scroll snap (proximity); disabled for reduced motion */
 @media (prefers-reduced-motion:no-preference){
-  html.welcome-snap{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:100px;scroll-padding-bottom:200px}
+  html.welcome-snap{scroll-behavior:smooth;scroll-snap-type:y proximity;scroll-padding-top:80px;scroll-padding-bottom:24px}
   html.welcome-snap .welcome-guide{scroll-snap-align:start;scroll-snap-stop:normal}
   html.welcome-snap .welcome-terms-snap{scroll-snap-align:start;scroll-snap-stop:normal;padding-bottom:200px}
 }
