@@ -434,8 +434,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 <!-- TOAST -->
 <div class="tst" id="tst"></div>
-<!-- Debug (runtime trace for view token mapping) -->
-<div id="dbg-trace" style="display:none;position:fixed;top:8px;left:8px;z-index:9999;background:rgba(250,247,242,.95);border:1px solid var(--border);border-radius:10px;padding:10px 12px;max-width:86vw;white-space:pre-wrap;font-family:'DM Mono',monospace;font-size:10px;line-height:1.35;color:var(--text);box-shadow:0 6px 22px rgba(37,35,31,.08)"></div>
 
 <!-- DETAIL MODAL -->
 <div class="mo" id="mo" onclick="cmO(event)">
@@ -1594,7 +1592,6 @@ function loadUserView(){
 // ============================
 var PJ1_VIEW_NAMES_KEY='pj1viewNames';
 var userRoleNames={partner:{},child:{},acpartner:{}};
-var PJ1_VIEW_NAMES_DEBUG_LOGGED={tokenMap:{},fields:{}};
 
 // Labels/placeholder copy for the role-name step.
 // "You (optional)" fields are for internal reference only; we do NOT use those names in generated sentences.
@@ -1636,19 +1633,6 @@ function loadUserRoleNames(){
       });
     });
   }catch(e){}
-  // #region debug-loadUserRoleNames
-  try{
-    function countNonEmpty(vk){
-      var o=userRoleNames[vk]||{};
-      var n=0;
-      ['PR','PT','CH','CP'].forEach(function(k){
-        if(o[k]&&String(o[k]).trim().length)n++;
-      });
-      return n;
-    }
-    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H5',location:'index.html:loadUserRoleNames',message:'role names loaded counts (booleans only)',data:{counts:{partner:countNonEmpty('partner'),child:countNonEmpty('child'),acpartner:countNonEmpty('acpartner')}},timestamp:Date.now()})}).catch(function(){});
-  }catch(e){}
-  // #endregion
 }
 
 function saveUserRoleNames(){
@@ -1669,20 +1653,6 @@ function getEffectiveTokenMap(vk){
       map[k+"'s"]=nm+"'s";
     }
   });
-  // #region debug-getEffectiveTokenMap
-  try{
-    if(!PJ1_VIEW_NAMES_DEBUG_LOGGED.tokenMap[vk]){
-      PJ1_VIEW_NAMES_DEBUG_LOGGED.tokenMap[vk]=true;
-      var overrides={};
-      ['PR','PT','CH','CP'].forEach(function(k){
-        if(k===selfKey)return;
-        var nm=names&&names[k]?String(names[k]).trim():'';
-        overrides[k]=!!nm;
-      });
-      fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H3',location:'index.html:getEffectiveTokenMap',message:'effective token overrides (booleans only)',data:{vk:vk,selfKey:selfKey,overrides:overrides,selfNameSet:!!(selfKey&&names&&names[selfKey]&&String(names[selfKey]).trim().length)},timestamp:Date.now()})}).catch(function(){});
-    }
-  }catch(e){}
-  // #endregion
   return map;
 }
 
@@ -1723,11 +1693,6 @@ function backToViewPicker(){
 function openRoleNamesStep(vk){
   setViewStep('names');
   renderViewNamesFields(vk);
-  // #region debug-openRoleNamesStep
-  try{
-    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:openRoleNamesStep',message:'opened names step',data:{vk:vk},timestamp:Date.now()})}).catch(function(){});
-  }catch(e){}
-  // #endregion
 }
 
 function confirmViewNames(){
@@ -1746,17 +1711,6 @@ function confirmViewNames(){
     if(r.k===selfKey)return;
     userRoleNames[vk][r.k]=nm;
   });
-  // #region debug-confirmViewNames
-  try{
-    var nameSet={};
-    ['PR','PT','CH','CP'].forEach(function(k){
-      if(k===selfKey)return;
-      var el=document.getElementById('view-name-'+k);
-      nameSet[k]=!!(el&&String(el.value||'').trim().length);
-    });
-    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H2',location:'index.html:confirmViewNames',message:'confirmed view role-name step (booleans only)',data:{vk:vk,selfKey:selfKey,nameSet:nameSet,selfNameSet:!!(selfKey&&document.getElementById('view-name-'+selfKey)&&String(document.getElementById('view-name-'+selfKey).value||'').trim().length)},timestamp:Date.now()})}).catch(function(){});
-  }catch(e){}
-  // #endregion
   saveUserRoleNames();
   closeViewPicker();
   applyUserViewChange();
@@ -1772,33 +1726,10 @@ function viewMapForField(field){
   if(VIEW_USES_SHARED_PLAIN[field])return SHARED_PLAIN;
   var vk=readerViewKey();
   if(vk==='neutral')return SHARED_PLAIN;
-  // #region debug-viewMapForField
-  try{
-    if(!PJ1_VIEW_NAMES_DEBUG_LOGGED.fields[field]){
-      PJ1_VIEW_NAMES_DEBUG_LOGGED.fields[field]=true;
-      if(['w','ex','foldNote','int','sc','correction'].indexOf(field)!==-1){
-        fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H4',location:'index.html:viewMapForField',message:'field token map routing',data:{field:field,vk:vk,usesSharedPlain:!!VIEW_USES_SHARED_PLAIN[field]},timestamp:Date.now()})}).catch(function(){});
-      }
-    }
-  }catch(e){}
-  // #endregion
   return getEffectiveTokenMap(vk);
 }
 
-function dbgTraceUpdate(){
-  try{
-    var el=document.getElementById('dbg-trace');
-    if(!el)return;
-    var vk=readerViewKey();
-    var wMap=viewMapForField('w');
-    var intMap=viewMapForField('int');
-    function tok(map,k){return map&&map[k]?String(map[k]):'(none)';}
-    el.textContent='View: '+vk+
-      '\\nfield w (PR/PT/CH/CP): '+tok(wMap,'PR')+' | '+tok(wMap,'PT')+' | '+tok(wMap,'CH')+' | '+tok(wMap,'CP')+
-      '\\nfield int (PR/PT/CH/CP): '+tok(intMap,'PR')+' | '+tok(intMap,'PT')+' | '+tok(intMap,'CH')+' | '+tok(intMap,'CP');
-    el.style.display='block';
-  }catch(e){}
-}
+
 function catFieldOverride(cat,field){
   var o=cat[field+'_'+readerViewKey()];
   if(o!=null&&String(o).length)return o;
@@ -1847,25 +1778,13 @@ function selectUserView(v){
   try{localStorage.setItem('pj1view',v);}catch(e){}
   // Neutral: no follow-up names step
   if(v==='neutral'){
-    // #region debug-selectUserView-neutral
-    try{
-      fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:selectUserView',message:'neutral view path',data:{v:v},timestamp:Date.now()})}).catch(function(){});
-    }catch(e){}
-    // #endregion
     closeViewPicker();
     applyUserViewChange();
-    dbgTraceUpdate();
     return;
   }
   // Non-neutral: open role-name step and let user apply/adjust optional names.
   applyUserViewChange();
   openRoleNamesStep(v);
-  // #region debug-selectUserView-nonNeutral
-  try{
-    fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:selectUserView',message:'non-neutral view path (names step should open)',data:{v:v},timestamp:Date.now()})}).catch(function(){});
-  }catch(e){}
-  // #endregion
-  dbgTraceUpdate();
 }
 function openViewPicker(){
   syncViewPickerHighlight();
