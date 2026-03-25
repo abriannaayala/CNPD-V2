@@ -434,6 +434,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',-apple-system,
 
 <!-- TOAST -->
 <div class="tst" id="tst"></div>
+<!-- Debug (runtime trace for view token mapping) -->
+<div id="dbg-trace" style="display:none;position:fixed;top:8px;left:8px;z-index:9999;background:rgba(250,247,242,.95);border:1px solid var(--border);border-radius:10px;padding:10px 12px;max-width:86vw;white-space:pre-wrap;font-family:'DM Mono',monospace;font-size:10px;line-height:1.35;color:var(--text);box-shadow:0 6px 22px rgba(37,35,31,.08)"></div>
 
 <!-- DETAIL MODAL -->
 <div class="mo" id="mo" onclick="cmO(event)">
@@ -1521,7 +1523,9 @@ function onToggleShowRecentMoments(){
 
 // Reader view: w/ex/foldNote → SHARED_PLAIN; int/sc/correction → map for selected view (+ optional int_partner etc.).
 var TOKEN_KEYS_ORDER=["PR's","PT's","CH's","CP's",'PR','PT','CH','CP'];
-var VIEW_USES_SHARED_PLAIN={w:1,ex:1,foldNote:1};
+// Apply reader-view token mapping to body copy too (so language changes per selected view).
+// Neutral still uses SHARED_PLAIN via getEffectiveTokenMap('neutral').
+var VIEW_USES_SHARED_PLAIN={};
 var SHARED_PLAIN={
   "PR's":"this person's",
   "PT's":"their partner's",
@@ -1780,6 +1784,21 @@ function viewMapForField(field){
   // #endregion
   return getEffectiveTokenMap(vk);
 }
+
+function dbgTraceUpdate(){
+  try{
+    var el=document.getElementById('dbg-trace');
+    if(!el)return;
+    var vk=readerViewKey();
+    var wMap=viewMapForField('w');
+    var intMap=viewMapForField('int');
+    function tok(map,k){return map&&map[k]?String(map[k]):'(none)';}
+    el.textContent='View: '+vk+
+      '\\nfield w (PR/PT/CH/CP): '+tok(wMap,'PR')+' | '+tok(wMap,'PT')+' | '+tok(wMap,'CH')+' | '+tok(wMap,'CP')+
+      '\\nfield int (PR/PT/CH/CP): '+tok(intMap,'PR')+' | '+tok(intMap,'PT')+' | '+tok(intMap,'CH')+' | '+tok(intMap,'CP');
+    el.style.display='block';
+  }catch(e){}
+}
 function catFieldOverride(cat,field){
   var o=cat[field+'_'+readerViewKey()];
   if(o!=null&&String(o).length)return o;
@@ -1835,6 +1854,7 @@ function selectUserView(v){
     // #endregion
     closeViewPicker();
     applyUserViewChange();
+    dbgTraceUpdate();
     return;
   }
   // Non-neutral: open role-name step and let user apply/adjust optional names.
@@ -1845,6 +1865,7 @@ function selectUserView(v){
     fetch('http://127.0.0.1:7937/ingest/fd0acc83-1430-40fe-bd8a-a574ea5a71b1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'792e04'},body:JSON.stringify({sessionId:'792e04',runId:'debug_pre',hypothesisId:'H1',location:'index.html:selectUserView',message:'non-neutral view path (names step should open)',data:{v:v},timestamp:Date.now()})}).catch(function(){});
   }catch(e){}
   // #endregion
+  dbgTraceUpdate();
 }
 function openViewPicker(){
   syncViewPickerHighlight();
