@@ -763,13 +763,6 @@ int:'The pause is the ask. You are not required to fill it. Receiving the story 
 sc:['Give one grounded response: "Thanks for making this."','Avoid repeated reassurance.'],
 correction:'You can be warm and appreciative without entering a reassurance loop.'},
 
-{id:'jinx-energy',g:'rejection',l:'Jinx energy',
-w:'Negative predictions are inserted right before positive moments.',
-ex:'Before a trip or celebration, PR predicts failure and the mood drops.',
-int:'Animals respond to nervous system regulation, not performance. Jinx keeps PR\'s distance for accurate reasons. Trust what Jinx tells you.',
-sc:['Say your frame: "I\'m still looking forward to this."','Do not debate the prediction.'],
-correction:'Protect your positive momentum. You can acknowledge uncertainty and still stay hopeful.'},
-
 {id:'emot-hijack',g:'attention',l:'Emotional hijacking of celebrations',
 w:'During someone else\'s positive moment, attention shifts to PR\'s feelings.',
 ex:'At another person\'s celebration, PR becomes distressed and the room turns to soothing PR.',
@@ -1521,9 +1514,7 @@ function onToggleShowRecentMoments(){
 
 // Reader view: w/ex/foldNote → SHARED_PLAIN; int/sc/correction → map for selected view (+ optional int_partner etc.).
 var TOKEN_KEYS_ORDER=["PR's","PT's","CH's","CP's",'PR','PT','CH','CP'];
-// Apply reader-view token mapping to body copy too (so language changes per selected view).
-// Neutral still uses SHARED_PLAIN via getEffectiveTokenMap('neutral').
-var VIEW_USES_SHARED_PLAIN={};
+var VIEW_USES_SHARED_PLAIN={w:1,ex:1,foldNote:1};
 var SHARED_PLAIN={
   "PR's":"this person's",
   "PT's":"their partner's",
@@ -1728,8 +1719,6 @@ function viewMapForField(field){
   if(vk==='neutral')return SHARED_PLAIN;
   return getEffectiveTokenMap(vk);
 }
-
-
 function catFieldOverride(cat,field){
   var o=cat[field+'_'+readerViewKey()];
   if(o!=null&&String(o).length)return o;
